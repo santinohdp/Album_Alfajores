@@ -422,6 +422,31 @@
     animation:stickerShine .65s ease forwards;
   }
 
+  /* ===== PEGAR BUTTON ===== */
+  .slot-pegar-btn{
+    position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:4px;cursor:pointer;
+    background:rgba(0,0,0,.45);border-radius:7px;
+    animation:pegarBtnIn .3s ease;
+  }
+  @keyframes pegarBtnIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+  .slot-pegar-btn .pegar-circle{
+    width:52px;height:52px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #555, #111);
+    border:3px solid #fff;
+    display:grid;place-items:center;
+    box-shadow:0 4px 16px rgba(0,0,0,.7),inset 0 2px 4px rgba(255,255,255,.15);
+    transition:transform .12s;
+  }
+  .slot-pegar-btn:hover .pegar-circle{transform:scale(1.1)}
+  .slot-pegar-btn .pegar-circle::before{
+    content:"+";color:#fff;font-size:30px;font-weight:300;line-height:1;margin-top:-2px;
+  }
+  .slot-pegar-btn .pegar-label{
+    font-family:'Cinzel',serif;font-size:7px;letter-spacing:.12em;
+    color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8);opacity:.9;
+  }
+
   /* ===== REPETIDAS ===== */
   .rep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin:12px 0;max-height:55vh;overflow-y:auto;padding-right:4px}
   .rep-card{
@@ -960,9 +985,9 @@ async function openPack(pid){
     owned[c.id]=(owned[c.id]||0)+1;
     cards.push({...c,dup:isDup});
   }
-  // Track new (non-dup) cards for sticker animation
+  // Track new cards for pegar buttons
   const newCardIds = cards.filter(c=>!c.dup).map(c=>c.id);
-  window._pendingStickerAnim = newCardIds;
+  window._pendingPegar = newCardIds;
   await savePlayer();
   openModal(`
     <h2>${pack.name}</h2>
@@ -1189,16 +1214,30 @@ function openModal(html){
 }
 function closeModal(){
   document.getElementById('veil').classList.remove('show');
-  // Animate newly obtained stickers
-  if(window._pendingStickerAnim && window._pendingStickerAnim.length){
-    const ids = window._pendingStickerAnim;
-    window._pendingStickerAnim = null;
+  // Show + pegar buttons on new slots
+  if(window._pendingPegar && window._pendingPegar.length){
+    const ids = [...window._pendingPegar];
+    window._pendingPegar = null;
     setTimeout(()=>{
       ids.forEach(cid=>{
         const el = document.querySelector(`.slot[data-cid="${cid}"]`);
-        if(el){ el.classList.remove('pegar-anim'); void el.offsetWidth; el.classList.add('pegar-anim'); }
+        if(!el) return;
+        // Remove any existing pegar btn
+        el.querySelector('.slot-pegar-btn')?.remove();
+        const btn = document.createElement('div');
+        btn.className = 'slot-pegar-btn';
+        btn.innerHTML = '<div class="pegar-circle"></div><span class="pegar-label">PEGAR</span>';
+        el.style.position = 'relative';
+        el.appendChild(btn);
+        btn.onclick = (e)=>{
+          e.stopPropagation();
+          btn.remove();
+          el.classList.remove('pegar-anim');
+          void el.offsetWidth;
+          el.classList.add('pegar-anim');
+        };
       });
-    }, 100);
+    }, 120);
   }
 }
 window.closeModal=closeModal;
