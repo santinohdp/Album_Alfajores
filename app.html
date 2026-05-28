@@ -402,13 +402,86 @@
   }
   .music-upload-btn:hover{border-color:#c9a24a;color:#f0d890}
 
+  /* ===== TABBAR HIDE BUTTON ===== */
+  .tabbar-toggle{
+    position:fixed;right:10px;z-index:12;width:28px;height:28px;border-radius:50%;
+    background:linear-gradient(180deg,#2e1a08,#160904);border:1.5px solid #c9a24a;
+    color:#f0d890;font-size:14px;display:grid;place-items:center;cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,.5);transition:bottom .3s;
+  }
+  .tabbar-toggle.up{bottom:98px}.tabbar-toggle.down{bottom:16px}
+  .tabbar{transition:transform .3s,opacity .3s}
+  .tabbar.hidden{transform:translateY(110%);opacity:0;pointer-events:none}
+
+  /* ===== RESPONSIVE ===== */
   @media(max-width:900px){
     .prop-mate,.prop-sobres,.prop-botella,.prop-alfajor{display:none}
-    .hud{position:static;margin:80px auto 0;transform:none;width:auto;max-width:340px}
-    .book{grid-template-columns:1fr;height:auto}
-    .page.left{border-right:none;border-bottom:2px dashed rgba(90,55,18,.25);margin-right:0;margin-bottom:18px}
-    .grid{grid-template-columns:repeat(3,1fr)}
-    .actions{bottom:76px}
+
+    /* HUD - top bar compacto */
+    .hud{
+      position:fixed;top:0;left:0;right:0;width:100%;border-radius:0;
+      transform:none;padding:6px 12px;display:flex;align-items:center;gap:10px;
+      flex-wrap:nowrap;z-index:10;
+    }
+    .hud-inner{flex:1;min-width:0}
+    .hud h2{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hud .sub{font-size:9px}
+    .hud-pct{font-size:22px;flex-shrink:0}
+    .hud-bar{margin-top:3px}
+    .hud-avatar{width:36px;height:36px;font-size:14px}
+
+    /* Title oculto en mobile */
+    .title{display:none}
+
+    /* Secciones debajo del HUD */
+    .sections{
+      top:62px;left:0;right:0;transform:none;width:100%;border-radius:0;
+      padding:4px 6px;gap:3px;border-left:none;border-right:none;max-width:100%;
+    }
+    .sections button{font-size:9px;padding:3px 8px}
+
+    /* Stage */
+    .stage{padding:108px 8px 148px;align-items:flex-start}
+
+    /* Libro - una página a la vez */
+    .book{
+      grid-template-columns:1fr;height:auto;width:100%;
+      border-radius:10px;padding:12px 10px;
+    }
+    .book-spine{display:none}
+    .page{border-radius:6px;padding:12px 10px 10px}
+    .page.left{
+      border-right:none;margin-right:0;
+      border-bottom:2px dashed rgba(90,55,18,.3);margin-bottom:14px;
+    }
+    .page h3{font-size:10px;margin-bottom:8px}
+    .grid{grid-template-columns:repeat(3,1fr);gap:6px}
+    .slot .name{font-size:7px}
+
+    /* Nav arrows más grandes */
+    .nav{width:30px;height:44px;font-size:16px}
+    .nav.prev{left:-14px}.nav.next{right:-14px}
+
+    /* Actions */
+    .actions{
+      bottom:82px;gap:6px;padding:0 8px;width:100%;
+      display:grid;grid-template-columns:1fr 1fr;
+    }
+    .plaque{padding:7px 10px;font-size:10px;justify-content:center}
+    .plaque small{display:none}
+
+    /* Music */
+    .music-player,.music-upload-btn{bottom:132px;right:8px}
+
+    /* Card detail */
+    .card-detail-img,.card-detail-img-placeholder{height:200px}
+    .card-detail h2{font-size:16px}
+  }
+
+  @media(max-width:480px){
+    .grid{grid-template-columns:repeat(3,1fr);gap:4px}
+    .actions{grid-template-columns:1fr 1fr}
+    .plaque .ico{font-size:14px}
   }
 </style>
 </head>
@@ -489,7 +562,8 @@
 </div>
 
 <!-- Tabbar -->
-<div class="tabbar">
+<button class="tabbar-toggle up" id="tabToggle" title="Ocultar menú">▼</button>
+<div class="tabbar" id="tabbar">
   <button data-tab="inicio"><span class="ico">🧭</span>INICIO</button>
   <button data-tab="album" class="active"><span class="ico">📖</span>ÁLBUM</button>
   <button data-tab="tesoros"><span class="ico">🗝</span>TESOROS</button>
@@ -1098,6 +1172,18 @@ document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>{
     setClosed(true); closeModal();
   }
 });
+
+/* ===== TABBAR TOGGLE ===== */
+const tabToggle = document.getElementById('tabToggle');
+const tabbarEl  = document.getElementById('tabbar');
+let tabbarVisible = true;
+tabToggle.onclick = ()=>{
+  tabbarVisible = !tabbarVisible;
+  tabbarEl.classList.toggle('hidden', !tabbarVisible);
+  tabToggle.textContent = tabbarVisible ? '▼' : '▲';
+  tabToggle.classList.toggle('up',   tabbarVisible);
+  tabToggle.classList.toggle('down', !tabbarVisible);
+};
 
 renderSections();
 renderAlbum();
