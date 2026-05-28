@@ -402,6 +402,36 @@
   }
   .music-upload-btn:hover{border-color:#c9a24a;color:#f0d890}
 
+  /* ===== STICKER PEGAR ANIMATION ===== */
+  @keyframes stickerPegar{
+    0%  {transform:scale(2.2) rotate(-12deg);opacity:0;filter:brightness(2)}
+    40% {transform:scale(1.1) rotate(3deg);opacity:1;filter:brightness(1.3)}
+    65% {transform:scale(.94) rotate(-1deg)}
+    80% {transform:scale(1.03) rotate(.5deg)}
+    100%{transform:scale(1) rotate(0deg);filter:brightness(1)}
+  }
+  .slot.pegar-anim .art{animation:stickerPegar .65s cubic-bezier(.34,1.56,.64,1) forwards}
+  @keyframes stickerShine{
+    0%  {opacity:0;transform:translateX(-100%) rotate(25deg)}
+    50% {opacity:.7}
+    100%{opacity:0;transform:translateX(200%) rotate(25deg)}
+  }
+  .slot.pegar-anim::after{
+    content:"";position:absolute;inset:0;border-radius:7px;pointer-events:none;
+    background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.7) 50%,transparent 60%);
+    animation:stickerShine .65s ease forwards;
+  }
+
+  /* ===== REPETIDAS ===== */
+  .rep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin:12px 0;max-height:55vh;overflow-y:auto;padding-right:4px}
+  .rep-card{
+    border-radius:8px;padding:7px;text-align:center;font-family:'Cinzel',serif;font-size:9px;
+    border:1.5px solid #c9a24a;background:linear-gradient(160deg,#3a1e08,#1a0c04);color:#f0d890;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+  }
+  .rep-card .rep-qty{font-family:'UnifrakturCook',serif;font-size:22px;color:#f0d27a;line-height:1}
+  .rep-card .rep-name{font-size:8px;opacity:.8;line-height:1.2}
+
   /* ===== TABBAR HIDE BUTTON ===== */
   .tabbar-toggle{
     position:fixed;right:10px;z-index:12;width:28px;height:28px;border-radius:50%;
@@ -580,6 +610,7 @@
   <button data-tab="trueques"><span class="ico">🤝</span>TRUEQUES</button>
   <button data-tab="team"><span class="ico">⚽</span>EQUIPO</button>
   <button data-tab="perfil"><span class="ico">🗺</span>PERFIL</button>
+  <button data-tab="repetidas"><span class="ico">📋</span>REPETIDAS</button>
 </div>
 
 <div class="veil" id="veil"><div class="modal" id="modal"></div></div>
@@ -929,6 +960,9 @@ async function openPack(pid){
     owned[c.id]=(owned[c.id]||0)+1;
     cards.push({...c,dup:isDup});
   }
+  // Track new (non-dup) cards for sticker animation
+  const newCardIds = cards.filter(c=>!c.dup).map(c=>c.id);
+  window._pendingStickerAnim = newCardIds;
   await savePlayer();
   openModal(`
     <h2>${pack.name}</h2>
@@ -1043,7 +1077,7 @@ async function cancelTrade(tid){
 }
 async function acceptTrade(tid){
   const t = TRADES.find(x=>x.id===tid); if(!t || t.status!=='open') return;
-  if((owned[t.want]||0)<1){ alert('Ya no tenés esa carta.'); return; }
+  if((owned[t.want]||0)<2){ alert('Solo tenés 1 copia de esa carta (está en tu álbum). No podés intercambiarla.'); return; }
   const fromRef = doc(db,'players',t.from);
   const fromSnap = await getDoc(fromRef);
   if(!fromSnap.exists()){ alert('Jugador no existe.'); return; }
@@ -1153,7 +1187,20 @@ function openModal(html){
   document.getElementById('modal').innerHTML=html;
   document.getElementById('veil').classList.add('show');
 }
-function closeModal(){ document.getElementById('veil').classList.remove('show') }
+function closeModal(){
+  document.getElementById('veil').classList.remove('show');
+  // Animate newly obtained stickers
+  if(window._pendingStickerAnim && window._pendingStickerAnim.length){
+    const ids = window._pendingStickerAnim;
+    window._pendingStickerAnim = null;
+    setTimeout(()=>{
+      ids.forEach(cid=>{
+        const el = document.querySelector(`.slot[data-cid="${cid}"]`);
+        if(el){ el.classList.remove('pegar-anim'); void el.offsetWidth; el.classList.add('pegar-anim'); }
+      });
+    }, 100);
+  }
+}
 window.closeModal=closeModal;
 document.getElementById('veil').addEventListener('click',e=>{if(e.target.id==='veil')closeModal()});
 document.getElementById('openTesoros').onclick=showTesoros;
@@ -1168,6 +1215,23 @@ document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>{
   else if(t==='trueques') showTrueques();
   else if(t==='team') showTeam();
   else if(t==='album'){ setClosed(false); closeModal(); }
+  else if(t==='repetidas'){
+    const dupes = CARDS.filter(c=>(owned[c.id]||0)>1);
+    if(!dupes.length){
+      openModal('<h2>REPETIDAS</h2><p style="opacity:.7;margin:14px 0">No tenés cartas repetidas todavía.</p><button class="btn" onclick="closeModal()">Ok</button>');
+      return;
+    }
+    openModal(`<h2>MIS REPETIDAS</h2>
+      <p style="font-size:10px;opacity:.7;margin-bottom:8px">${dupes.length} cartas repetidas</p>
+      <div class="rep-grid">
+        ${dupes.map(c=>`<div class="rep-card">
+          ${alfajorSVG(c)}
+          <div class="rep-qty">x${(owned[c.id]||0)-1}</div>
+          <div class="rep-name">${c.name}</div>
+        </div>`).join('')}
+      </div>
+      <button class="btn ghost" onclick="closeModal()">Cerrar</button>`);
+  }
   else if(t==='perfil'){
     const have=CARDS.filter(c=>(owned[c.id]||0)>0).length;
     const who=CURRENT_USER?.displayName||CURRENT_USER?.email||'Coleccionista';
