@@ -333,6 +333,75 @@
   @keyframes pop{to{transform:scale(1);opacity:1}}
   .empty-msg{text-align:center;color:#f0d890;font-family:'Cinzel',serif;letter-spacing:.1em;margin:18px 0;opacity:.75}
 
+  /* ===== CARD DETAIL MODAL ===== */
+  .card-detail-veil{
+    position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.82);backdrop-filter:blur(8px);
+  }
+  .card-detail-veil.show{display:flex}
+  .card-detail{
+    position:relative;width:min(400px,88vw);
+    background:linear-gradient(170deg,#2e1a08,#160904);
+    border:2px solid #c9a24a;border-radius:16px;
+    box-shadow:0 40px 80px rgba(0,0,0,.8),inset 0 0 30px rgba(201,162,74,.12);
+    overflow:hidden;font-family:'Cinzel',serif;color:#f0d890;
+    animation:cardPop .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes cardPop{from{transform:scale(.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+  .card-detail-img{
+    width:100%;height:260px;object-fit:cover;display:block;
+    border-bottom:2px solid #c9a24a;
+  }
+  .card-detail-img-placeholder{
+    width:100%;height:260px;display:flex;align-items:center;justify-content:center;
+    border-bottom:2px solid #c9a24a;
+  }
+  .card-detail-body{padding:18px 20px 20px}
+  .card-detail-rarity{
+    display:inline-block;font-size:9px;letter-spacing:.18em;padding:3px 10px;
+    border-radius:99px;margin-bottom:10px;font-weight:700;
+  }
+  .rarity-classic .card-detail-rarity{background:rgba(201,162,74,.2);border:1px solid #c9a24a;color:#f0d27a}
+  .rarity-coke    .card-detail-rarity{background:rgba(200,16,46,.25);border:1px solid #e03050;color:#ff9090}
+  .rarity-silver  .card-detail-rarity{background:rgba(180,200,220,.15);border:1px solid #c0d0e0;color:#d0e0f0}
+  .rarity-gold    .card-detail-rarity{background:rgba(240,200,60,.2);border:1px solid #f0d040;color:#ffe060;text-shadow:0 0 10px rgba(255,220,60,.6)}
+  .card-detail h2{font-size:20px;letter-spacing:.1em;margin:0 0 6px;line-height:1.2}
+  .card-detail .cd-num{font-size:10px;opacity:.55;letter-spacing:.2em;margin-bottom:10px}
+  .card-detail .cd-desc{font-family:'Lora',serif;font-size:12px;line-height:1.6;opacity:.8;margin:10px 0}
+  .card-detail .cd-copies{font-size:11px;opacity:.65;letter-spacing:.1em}
+  .card-detail-close{
+    position:absolute;top:10px;right:12px;width:30px;height:30px;
+    background:rgba(0,0,0,.6);border:1px solid #c9a24a;border-radius:50%;
+    color:#f0d890;font-size:16px;cursor:pointer;display:grid;place-items:center;
+    z-index:2;transition:.15s;
+  }
+  .card-detail-close:hover{background:#c9a24a;color:#1a0c04}
+
+  /* ===== MUSIC PLAYER ===== */
+  .music-player{
+    position:fixed;bottom:82px;right:14px;z-index:9;
+    display:flex;align-items:center;gap:8px;
+    padding:7px 12px;border-radius:99px;
+    background:linear-gradient(180deg,#2e1a08,#160904);
+    border:1.5px solid #c9a24a;
+    box-shadow:0 8px 20px rgba(0,0,0,.55);
+    font-family:'Cinzel',serif;font-size:9px;color:#f0d890;letter-spacing:.08em;
+    cursor:pointer;transition:.15s;
+  }
+  .music-player:hover{filter:brightness(1.15)}
+  .music-player .mp-btn{font-size:14px}
+  .music-player .mp-label{max-width:110px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:.8}
+  .music-upload-btn{
+    position:fixed;bottom:82px;right:14px;z-index:9;
+    padding:7px 14px;border-radius:99px;
+    background:linear-gradient(180deg,#2e1a08,#160904);
+    border:1.5px solid rgba(201,162,74,.5);
+    color:#c9a24a;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;
+    cursor:pointer;transition:.15s;
+    box-shadow:0 8px 20px rgba(0,0,0,.45);
+  }
+  .music-upload-btn:hover{border-color:#c9a24a;color:#f0d890}
+
   @media(max-width:900px){
     .prop-mate,.prop-sobres,.prop-botella,.prop-alfajor{display:none}
     .hud{position:static;margin:80px auto 0;transform:none;width:auto;max-width:340px}
@@ -346,6 +415,23 @@
 <body>
 
 
+
+<!-- Card detail overlay -->
+<div class="card-detail-veil" id="cardDetailVeil">
+  <div class="card-detail" id="cardDetail">
+    <div class="card-detail-close" id="cardDetailClose">✕</div>
+  </div>
+</div>
+
+<!-- Music player -->
+<label class="music-upload-btn" id="musicUploadBtn" title="Subir música de fondo">🎵 MÚSICA</label>
+<input type="file" id="musicFile" accept=".mp3,audio/*" style="display:none" id="musicFileInput"/>
+<div class="music-player" id="musicPlayer" style="display:none">
+  <span class="mp-btn" id="mpBtn">⏸</span>
+  <span class="mp-label" id="mpLabel">—</span>
+  <span style="opacity:.5;font-size:11px">🔊</span>
+</div>
+<audio id="bgAudio" loop></audio>
 
 <div class="title">¡ALFA-ÁLBUM ARGENTINO! · EDICIÓN DE LEYENDAS</div>
 
@@ -687,10 +773,16 @@ function renderAlbum(){
   document.getElementById('lhead').textContent=L.title;
   document.getElementById('rhead').textContent=R.title;
   document.getElementById('leftGrid').innerHTML  = L.slots.length
-    ? L.slots.map((c,i)=>slotHTML(c,pageIndex*PER_PAGE+i)).join('')
+    ? L.slots.map((c,i)=>slotHTMLClickable(c,pageIndex*PER_PAGE+i)).join('')
     : '<div class="empty-msg">Sin cartas todavía.<br>Creálas desde el Panel.</div>';
-  document.getElementById('rightGrid').innerHTML = R.slots.map((c,i)=>slotHTML(c,(pageIndex+1)*PER_PAGE+i)).join('');
+  document.getElementById('rightGrid').innerHTML = R.slots.map((c,i)=>slotHTMLClickable(c,(pageIndex+1)*PER_PAGE+i)).join('');
   renderHUD();
+  document.querySelectorAll('.slot').forEach(el=>{
+    el.onclick=()=>{
+      const card=CARDS.find(c=>c.id===el.dataset.cid);
+      if(card) openCardDetail(card,parseInt(el.dataset.idx));
+    };
+  });
 }
 function renderHUD(){
   const list=filteredCards(), total=list.length;
@@ -1010,6 +1102,86 @@ document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>{
 renderSections();
 renderAlbum();
 renderCover();
+
+/* ===== CARD DETAIL ===== */
+const RARITY_LABEL = { classic:'Clásico', coke:'Coca-Cola', silver:'Plateado', gold:'Dorado ✦' };
+
+function openCardDetail(card, idx){
+  const have = (owned[card.id]||0) > 0;
+  const rarClass = 'rarity-' + (card.rarity||'classic');
+  const rarLabel = RARITY_LABEL[card.rarity] || 'Clásico';
+  const copies = owned[card.id] || 0;
+
+  const imgHTML = card.image
+    ? `<img class="card-detail-img" src="${card.image}" alt="${card.name}"/>`
+    : `<div class="card-detail-img-placeholder">${alfajorSVG({...card, _big:true})}</div>`;
+
+  document.getElementById('cardDetail').className = `card-detail ${rarClass}`;
+  document.getElementById('cardDetail').innerHTML = `
+    <div class="card-detail-close" id="cardDetailClose">✕</div>
+    ${have ? imgHTML : `<div class="card-detail-img-placeholder" style="font-family:'UnifrakturCook',serif;font-size:80px;color:rgba(201,162,74,.25)">?</div>`}
+    <div class="card-detail-body">
+      <div class="card-detail-rarity">${rarLabel}</div>
+      <div class="cd-num">#${idx+1}</div>
+      <h2>${have ? card.name : '???'}</h2>
+      ${card.description ? `<div class="cd-desc">${card.description}</div>` : ''}
+      ${have
+        ? `<div class="cd-copies">${copies > 1 ? `Tenés ${copies} copias · ` : ''}En tu álbum ✓</div>`
+        : `<div class="cd-copies" style="opacity:.45">Todavía no la conseguiste</div>`}
+    </div>`;
+  document.getElementById('cardDetailVeil').classList.add('show');
+  document.getElementById('cardDetailClose').onclick = closeCardDetail;
+}
+function closeCardDetail(){
+  document.getElementById('cardDetailVeil').classList.remove('show');
+}
+document.getElementById('cardDetailVeil').addEventListener('click', e=>{
+  if(e.target.id==='cardDetailVeil') closeCardDetail();
+});
+
+// Patch slotHTML to be clickable
+const _origSlotHTML = slotHTML;
+function slotHTMLClickable(c, idx){
+  const have = (owned[c.id]||0) > 0;
+  const cls = have ? `have ${c.rarity}` : 'empty';
+  return `<div class="slot ${cls}" title="${c.name}" data-cid="${c.id}" data-idx="${idx}" style="cursor:pointer">
+    <span class="num">#${idx+1}</span>
+    <div class="art">${have ? alfajorSVG(c) : ''}</div>
+    <div class="name">${have ? c.name : ''}</div>
+    ${have && owned[c.id]>1 ? `<span class="tag-rarity">x${owned[c.id]}</span>` : ''}
+  </div>`;
+}
+
+// Re-render to apply clickable slots
+renderAlbum();
+
+/* ===== MUSIC PLAYER ===== */
+const bgAudio  = document.getElementById('bgAudio');
+const mpBtn    = document.getElementById('mpBtn');
+const mpLabel  = document.getElementById('mpLabel');
+const mpPlayer = document.getElementById('musicPlayer');
+const mpUpload = document.getElementById('musicUploadBtn');
+
+document.getElementById('musicUploadBtn').onclick = ()=>{
+  document.querySelector('input[type=file][accept]').click();
+};
+document.querySelector('input[type=file][accept]').onchange = e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const url = URL.createObjectURL(file);
+  bgAudio.src = url;
+  bgAudio.volume = 0.35;
+  bgAudio.play();
+  mpLabel.textContent = file.name.replace(/\.mp3$/i,'').slice(0,22);
+  mpBtn.textContent = '⏸';
+  mpPlayer.style.display = 'flex';
+  mpUpload.style.display = 'none';
+};
+mpBtn.onclick = ()=>{
+  if(bgAudio.paused){ bgAudio.play(); mpBtn.textContent='⏸'; }
+  else { bgAudio.pause(); mpBtn.textContent='▶'; }
+};
+mpPlayer.addEventListener('click', e=>{ if(e.target===mpPlayer||e.target.className==='mp-label') return; });
 </script>
 </body>
 </html>
