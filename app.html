@@ -412,6 +412,15 @@
   .tabbar-toggle.up{bottom:98px}.tabbar-toggle.down{bottom:16px}
   .tabbar{transition:transform .3s,opacity .3s}
   .tabbar.hidden{transform:translateY(110%);opacity:0;pointer-events:none}
+  .actions{transition:transform .3s,opacity .3s}
+  .actions.hidden{transform:translateY(110%);opacity:0;pointer-events:none}
+  .actions-toggle{
+    position:fixed;left:10px;z-index:12;width:28px;height:28px;border-radius:50%;
+    background:linear-gradient(180deg,#2e1a08,#160904);border:1.5px solid #c9a24a;
+    color:#f0d890;font-size:14px;display:grid;place-items:center;cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,.5);transition:bottom .3s;
+  }
+  .actions-toggle.up{bottom:152px}.actions-toggle.down{bottom:16px}
 
   /* ===== RESPONSIVE ===== */
   @media(max-width:900px){
@@ -554,7 +563,8 @@
 </div>
 
 <!-- Acciones -->
-<div class="actions">
+<button class="actions-toggle up" id="actToggle" title="Ocultar acciones">▼</button>
+<div class="actions" id="actionsBar">
   <div class="plaque" id="toggleAlbum"><span class="ico">📕</span><div>CERRAR<small>Ver portada</small></div></div>
   <div class="plaque" id="openTesoros"><span class="ico">🗝</span><div>TESOROS<small>Abrir sobres</small></div></div>
   <div class="plaque" id="openTrueques"><span class="ico">🤝</span><div>TRUEQUES<small>Cambios entre jugadores</small></div></div>
@@ -1172,6 +1182,18 @@ document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>{
     setClosed(true); closeModal();
   }
 });
+
+/* ===== ACTIONS TOGGLE ===== */
+const actToggle  = document.getElementById('actToggle');
+const actionsBar = document.getElementById('actionsBar');
+let actionsVisible = true;
+actToggle.onclick = ()=>{
+  actionsVisible = !actionsVisible;
+  actionsBar.classList.toggle('hidden', !actionsVisible);
+  actToggle.textContent = actionsVisible ? '▼' : '▲';
+  actToggle.classList.toggle('up',   actionsVisible);
+  actToggle.classList.toggle('down', !actionsVisible);
+};
 
 /* ===== TABBAR TOGGLE ===== */
 const tabToggle = document.getElementById('tabToggle');
