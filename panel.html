@@ -152,10 +152,21 @@
 </div>
 
 <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
-  db, collection, doc, addDoc, setDoc, updateDoc, deleteDoc,
-  onSnapshot, getDoc
-} from "./firebase.js";
+  getFirestore, collection, doc, getDoc, setDoc, addDoc,
+  updateDoc, deleteDoc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+const _app = initializeApp({
+  apiKey: "AIzaSyABqfTC0vwDqmGQ4ryAxMzNY1MxMapdolU",
+  authDomain: "album-alfajores.firebaseapp.com",
+  projectId: "album-alfajores",
+  storageBucket: "album-alfajores.firebasestorage.app",
+  messagingSenderId: "1022702000006",
+  appId: "1:1022702000006:web:a2fc4007f4fe6da4f43e07"
+});
+const db = getFirestore(_app);
 
 let CARDS=[], PACKS=[], PLAYERS=[];
 
