@@ -326,12 +326,26 @@
 </div>
 
 <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
-  db, doc, collection, onSnapshot, setDoc, getDoc, addDoc, deleteDoc, updateDoc,
-  query, where,
-  auth, onAuthStateChanged, signInWithEmailAndPassword,
+  getFirestore, collection, doc, getDoc, setDoc, addDoc,
+  updateDoc, deleteDoc, onSnapshot, query, where
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
   createUserWithEmailAndPassword, signOut, updateProfile, deleteUser
-} from "./firebase.js";
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+const _app = initializeApp({
+  apiKey: "AIzaSyABqfTC0vwDqmGQ4ryAxMzNY1MxMapdolU",
+  authDomain: "album-alfajores.firebaseapp.com",
+  projectId: "album-alfajores",
+  storageBucket: "album-alfajores.firebasestorage.app",
+  messagingSenderId: "1022702000006",
+  appId: "1:1022702000006:web:a2fc4007f4fe6da4f43e07"
+});
+const db   = getFirestore(_app);
+const auth = getAuth(_app);
 
 /* ============== AUTH ============== */
 let CURRENT_USER = null;
