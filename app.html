@@ -769,16 +769,13 @@ onAuthStateChanged(auth, async (user)=>{
       return;
     }
     myPlayer = data;
-    const incomingOwned = myPlayer.owned || {};
-    // If there are pending (not yet pasted) cards, remove them from the snapshot
-    // so slots stay empty until user taps +
+    const incomingOwned = {...(myPlayer.owned || {})};
+    // Subtract pending-pegar cards from display so slots stay empty until user taps +
     if(window._pendingPegar && window._pendingPegar.pendingOwned){
       const po = window._pendingPegar.pendingOwned;
       for(const cid in po){
-        if(incomingOwned[cid]){
-          incomingOwned[cid] = Math.max(0, (incomingOwned[cid]||0) - (po[cid]||0));
-          if(incomingOwned[cid]<=0) delete incomingOwned[cid];
-        }
+        incomingOwned[cid] = Math.max(0, (incomingOwned[cid]||0) - (po[cid]||0));
+        if(incomingOwned[cid]<=0) delete incomingOwned[cid];
       }
     }
     owned = incomingOwned;
@@ -1024,15 +1021,12 @@ async function openPack(pid){
     owned[c.id]=(owned[c.id]||0)+1;
     cards.push({...c,dup:isDup});
   }
-  // New cards go into "pendientes" - not shown as pasted until user taps +
+  // Store which new cards need manual pasting
   const newCardIds = cards.filter(c=>!c.dup).map(c=>c.id);
-  // Subtract 1 from owned for each new (non-dup) card so slot stays empty until pasted
-  newCardIds.forEach(cid=>{ owned[cid]=(owned[cid]||0)-1; if(owned[cid]<=0) delete owned[cid]; });
-  // Store pending separately
   const pendingOwned = {};
   cards.filter(c=>!c.dup).forEach(c=>{ pendingOwned[c.id]=(pendingOwned[c.id]||0)+1; });
   window._pendingPegar = { ids: newCardIds, pendingOwned };
-  await savePlayer(); // saves without the new cards
+  await savePlayer(); // saves full owned including new cards
   openModal(`
     <h2>${pack.name}</h2>
     <p style="font-size:11px;opacity:.8">¡Sobre abierto!</p>
@@ -1276,9 +1270,12 @@ function closeModal(){
         btn.onclick = async (e)=>{
           e.stopPropagation();
           btn.remove();
-          // Now actually add this card to owned
+          // Remove from pending so snapshot stops subtracting it
+          if(window._pendingPegar && window._pendingPegar.pendingOwned){
+            const po = window._pendingPegar.pendingOwned;
+            if(po[cid]){ po[cid]--; if(po[cid]<=0) delete po[cid]; }
+          }
           owned[cid]=(owned[cid]||0)+1;
-          await savePlayer();
           // Re-render slot inline
           el.className = `slot have ${(CARDS.find(c=>c.id===cid)||{}).rarity||'classic'}`;
           el.innerHTML = `<span class="num">#${el.dataset.idx*1+1}</span>
