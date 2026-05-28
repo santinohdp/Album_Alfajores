@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Panel · Alfa-Álbum</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=IM+Fell+English&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#c9a24a;--ink:#2a1808;--paper:#e9d6a6;--coke:#c8102e;--silver:#c9ccd1}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:'IM Fell English',Georgia,serif;color:#f6e6b6;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(201,162,74,.2), transparent 60%),
+      repeating-linear-gradient(90deg,#3b2412 0 18px,#2e1c0d 18px 36px),
+      #1a0f06;}
+  header{padding:18px 24px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  header h1{margin:0;font-family:'Cinzel';letter-spacing:.16em;font-size:18px}
+  header a{color:#f0d27a;font-family:'Cinzel';font-size:12px;letter-spacing:.14em;text-decoration:none;border:1px solid var(--gold);padding:8px 14px;border-radius:8px}
+  .status{font-size:11px;letter-spacing:.1em;font-family:'Cinzel'}
+  .status .dot{display:inline-block;width:8px;height:8px;border-radius:99px;background:#888;margin-right:6px;vertical-align:middle}
+  .status.ok .dot{background:#4ade80;box-shadow:0 0 6px #4ade80}
+  .wrap{max-width:1200px;margin:0 auto;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .card{background:linear-gradient(180deg,#3a2410,#1a0f06);border:2px solid var(--gold);border-radius:14px;padding:18px}
+  h2{margin:0 0 12px;font-family:'Cinzel';letter-spacing:.12em;font-size:14px;color:#f0d27a}
+  label{display:block;font-size:11px;letter-spacing:.1em;margin:10px 0 4px;color:#e9d6a6;font-family:'Cinzel'}
+  input,select{width:100%;padding:8px 10px;background:#1a0f06;border:1px solid var(--gold);color:#f6e6b6;border-radius:6px;font:inherit}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .chip{padding:6px 12px;border:1px solid var(--gold);border-radius:99px;cursor:pointer;font-size:11px;font-family:'Cinzel';letter-spacing:.08em;user-select:none}
+  .chip.on{background:var(--gold);color:#2a1808}
+  .btn{padding:10px 16px;background:linear-gradient(180deg,#c9a24a,#7a4a1f);color:#2a1808;border:2px solid #3a2410;border-radius:8px;font-family:'Cinzel';letter-spacing:.12em;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;color:#f6e6b6;border-color:var(--gold)}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px dashed rgba(201,162,74,.3);vertical-align:middle}
+  th{color:#f0d27a;font-family:'Cinzel';letter-spacing:.1em;font-size:11px}
+  .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;letter-spacing:.06em;border:1px solid;}
+  .pill.classic{color:#e9d6a6;border-color:#8a6024}
+  .pill.coke{color:#ffd1d1;border-color:var(--coke)}
+  .pill.silver{color:#eef1f5;border-color:#8a98a8}
+  .pill.gold{color:#fff0b8;border-color:var(--gold)}
+  .danger{color:#ff7777;cursor:pointer}
+  .full{grid-column:1/-1}
+  .stat{display:flex;gap:14px;flex-wrap:wrap}
+  .stat .b{flex:1;min-width:140px;padding:12px;border:1px solid var(--gold);border-radius:8px;text-align:center}
+  .stat .b b{display:block;font-family:'Cinzel';font-size:22px;color:#f0d27a}
+  small.hint{display:block;opacity:.7;font-size:11px;margin-top:6px}
+  .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .thumb{width:42px;height:42px;border-radius:6px;object-fit:cover;background:#2a1808;border:1px solid var(--gold)}
+  @media(max-width:800px){.wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>PANEL · ALFA-ÁLBUM ARGENTINO</h1>
+  <div style="display:flex;gap:14px;align-items:center">
+    <div class="status" id="status"><span class="dot"></span><span id="statusTxt">Conectando…</span></div>
+    <a href="./app.html" target="_blank">Abrir App ↗</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===== GESTOR DE CARTAS ===== -->
+  <div class="card full">
+    <h2>GESTOR DE CARTAS</h2>
+    <div class="row" style="align-items:flex-end">
+      <div style="flex:2;min-width:180px">
+        <label>Nombre</label>
+        <input id="cName" placeholder="Jorgito Clásico"/>
+      </div>
+      <div style="flex:3;min-width:220px">
+        <label>URL de imagen (opcional)</label>
+        <input id="cImg" placeholder="https://..."/>
+      </div>
+      <div style="flex:1;min-width:140px">
+        <label>Rareza</label>
+        <select id="cRar">
+          <option value="classic">Clásico</option>
+          <option value="coke">Coca-Cola</option>
+          <option value="silver">Plateado</option>
+          <option value="gold">Dorado</option>
+        </select>
+      </div>
+      <button class="btn" id="addCard">Agregar carta</button>
+    </div>
+    <small class="hint">Las cartas se guardan en la nube. Los sobres sólo entregan cartas que existan en esta lista (filtradas por rareza).</small>
+    <div style="margin-top:14px;max-height:340px;overflow:auto">
+      <table id="tCards">
+        <thead><tr><th>Img</th><th>Nombre</th><th>Rareza</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== NUEVO SOBRE ===== -->
+  <div class="card">
+    <h2>NUEVO SOBRE</h2>
+    <label>Nombre del sobre</label>
+    <input id="pname" placeholder="Sobre Legendario" />
+    <label>Cartas por sobre</label>
+    <input id="psize" type="number" min="1" max="20" value="5" />
+    <label>Rarezas permitidas</label>
+    <div class="row" id="rar">
+      <div class="chip on" data-r="classic">Clásico</div>
+      <div class="chip on" data-r="coke">Coca-Cola</div>
+      <div class="chip on" data-r="silver">Plateado</div>
+      <div class="chip on" data-r="gold">Dorado</div>
+    </div>
+    <small class="hint">Pesos: Clásico 62% · Coca 20% · Plateado 13% · Dorado 5%.</small>
+    <div class="actions">
+      <button class="btn" id="addPack">Crear sobre</button>
+    </div>
+  </div>
+
+  <!-- ===== REGALAR SOBRES ===== -->
+  <div class="card">
+    <h2>REGALAR SOBRES</h2>
+    <label>Jugador</label>
+    <select id="userSel">
+      <option value="__ALL__">— TODOS los jugadores —</option>
+    </select>
+    <label>Sobre</label>
+    <select id="giveSel"></select>
+    <label>Cantidad</label>
+    <input id="giveQty" type="number" min="1" value="3"/>
+    <div class="actions">
+      <button class="btn" id="giveBtn">Agregar al inventario</button>
+      <button class="btn ghost" id="clearInv">Vaciar inventario del jugador</button>
+    </div>
+    <small class="hint">Cartas y sobres son globales — al editarlos se actualiza para todos. El inventario es por jugador.</small>
+  </div>
+
+  <!-- ===== SOBRES DEFINIDOS ===== -->
+  <div class="card full">
+    <h2>SOBRES DEFINIDOS</h2>
+    <table id="tbl">
+      <thead><tr><th>Nombre</th><th>Cartas</th><th>Rarezas</th><th>Inventario</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- ===== JUGADORES ===== -->
+  <div class="card full">
+    <h2>JUGADORES REGISTRADOS</h2>
+    <div style="max-height:340px;overflow:auto">
+      <table id="tPlayers">
+        <thead><tr><th>Nombre</th><th>Email</th><th>Recolectadas</th><th>Repes</th><th>Sobres</th><th>Acciones</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <small class="hint">Los cambios en cartas y sobres se ven en todos los jugadores en tiempo real.</small>
+  </div>
+</div>
+
+<script type="module">
+import {
+  db, collection, doc, addDoc, setDoc, updateDoc, deleteDoc,
+  onSnapshot, getDoc
+} from "./firebase.js";
+
+let CARDS=[], PACKS=[], PLAYERS=[];
+
+const $ = s=>document.querySelector(s);
+const statusEl = $('#status'), statusTxt = $('#statusTxt');
+
+function setStatus(ok,msg){
+  statusEl.classList.toggle('ok', !!ok);
+  statusTxt.textContent = msg;
+}
+setStatus(false,'Conectando…');
+
+/* ---------- listeners ---------- */
+onSnapshot(collection(db,'cards'), snap=>{
+  CARDS = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  setStatus(true,'Conectado · '+CARDS.length+' cartas · '+PLAYERS.length+' jugadores');
+  renderCards(); renderPlayers();
+}, err=>setStatus(false,'Error: '+err.message));
+
+onSnapshot(collection(db,'packs'), snap=>{
+  PACKS = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  renderPacks(); renderPlayers();
+});
+
+onSnapshot(collection(db,'players'), snap=>{
+  PLAYERS = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  setStatus(true,'Conectado · '+CARDS.length+' cartas · '+PLAYERS.length+' jugadores');
+  renderPlayers(); renderUserSel();
+});
+
+/* ---------- CARTAS ---------- */
+$('#addCard').onclick = async ()=>{
+  const name = $('#cName').value.trim();
+  const image= $('#cImg').value.trim();
+  const rarity = $('#cRar').value;
+  if(!name){ alert('Poné un nombre'); return; }
+  await addDoc(collection(db,'cards'), { name, image, rarity, createdAt: Date.now() });
+  $('#cName').value=''; $('#cImg').value='';
+};
+window.delCard = async (id)=>{
+  if(!confirm('¿Eliminar esta carta?')) return;
+  await deleteDoc(doc(db,'cards',id));
+};
+function renderCards(){
+  const tb = $('#tCards tbody');
+  tb.innerHTML = CARDS.length ? CARDS.map(c=>`
+    <tr>
+      <td>${c.image?`<img class="thumb" src="${c.image}"/>`:'<div class="thumb"></div>'}</td>
+      <td>${c.name}</td>
+      <td><span class="pill ${c.rarity}">${c.rarity}</span></td>
+      <td><span class="danger" onclick="delCard('${c.id}')">eliminar</span></td>
+    </tr>`).join('') : '<tr><td colspan="4" style="opacity:.6;text-align:center;padding:14px">Sin cartas todavía</td></tr>';
+}
+
+/* ---------- SOBRES ---------- */
+document.querySelectorAll('#rar .chip').forEach(c=>c.onclick=()=>c.classList.toggle('on'));
+$('#addPack').onclick = async ()=>{
+  const name = $('#pname').value.trim() || 'Sobre sin nombre';
+  const size = Math.max(1, parseInt($('#psize').value)||5);
+  const allowed = [...document.querySelectorAll('#rar .chip.on')].map(c=>c.dataset.r);
+  if(!allowed.length){ alert('Elegí al menos una rareza'); return; }
+  await addDoc(collection(db,'packs'), { name, size, allowed });
+  $('#pname').value='';
+};
+window.delPack = async (id)=>{
+  if(!confirm('¿Eliminar sobre?')) return;
+  await deleteDoc(doc(db,'packs',id));
+};
+function renderPacks(){
+  $('#tbl').querySelector('tbody').innerHTML = PACKS.map(p=>`
+    <tr>
+      <td>${p.name}</td>
+      <td>${p.size}</td>
+      <td>${(p.allowed||[]).map(r=>`<span class="pill ${r}">${r}</span>`).join(' ')}</td>
+      <td>${PLAYERS.reduce((a,pl)=>a+((pl.inv||{})[p.id]||0),0)}</td>
+      <td><span class="danger" onclick="delPack('${p.id}')">eliminar</span></td>
+    </tr>`).join('') || '<tr><td colspan="5" style="opacity:.6;text-align:center;padding:14px">Sin sobres</td></tr>';
+  $('#giveSel').innerHTML = PACKS.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+
+/* ---------- JUGADORES ---------- */
+function renderUserSel(){
+  const sel = $('#userSel');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="__ALL__">— TODOS los jugadores —</option>' +
+    PLAYERS.map(p=>`<option value="${p.id}">${p.name||p.email||p.id.slice(0,6)}</option>`).join('');
+  if(prev) sel.value = prev;
+}
+function renderPlayers(){
+  const tb = $('#tPlayers tbody');
+  const visible = PLAYERS.filter(p=>!p.deleted);
+  tb.innerHTML = visible.length ? visible.map(p=>{
+    const owned = p.owned||{}, inv=p.inv||{};
+    const have = CARDS.filter(c=>(owned[c.id]||0)>0).length;
+    const dup  = Object.values(owned).reduce((a,n)=>a+Math.max(0,n-1),0);
+    const sobres = Object.values(inv).reduce((a,n)=>a+n,0);
+    return `<tr>
+      <td>${p.name||'—'}</td>
+      <td style="font-size:11px;opacity:.8">${p.email||''}</td>
+      <td>${have} / ${CARDS.length}</td>
+      <td>${dup}</td>
+      <td>${sobres}</td>
+      <td style="white-space:nowrap">
+        <span class="danger" onclick="resetPlayer('${p.id}')">resetear</span>
+        &nbsp;·&nbsp;
+        <span class="danger" onclick="deletePlayer('${p.id}','${(p.name||p.email||'').replace(/'/g,"\\'")}')">eliminar cuenta</span>
+      </td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="6" style="opacity:.6;text-align:center;padding:14px">Sin jugadores aún (se crean cuando alguien se registra en la app)</td></tr>';
+}
+window.resetPlayer = async (uid)=>{
+  if(!confirm('¿Borrar todo el álbum de este jugador?')) return;
+  await setDoc(doc(db,'players',uid), { owned:{} }, { merge:true });
+};
+window.deletePlayer = async (uid, label)=>{
+  if(!confirm(`¿Eliminar la cuenta de "${label}" por completo?\n\nSe borra su álbum y su login (email/contraseña).\nSi está conectada ahora se borra al instante; si no, se borra apenas vuelva a entrar.`)) return;
+  // marcamos como eliminada; la app del usuario se auto-borra (auth + doc) cuando esté online
+  await setDoc(doc(db,'players',uid), { deleted:true, deletedAt:Date.now() }, { merge:true });
+  alert('Cuenta marcada para eliminación. Se borrará en cuanto el usuario esté conectado.');
+};
+
+/* ---------- REGALAR ---------- */
+$('#giveBtn').onclick = async ()=>{
+  const pid = $('#giveSel').value;
+  const uid = $('#userSel').value;
+  const q = parseInt($('#giveQty').value)||1;
+  if(!pid){ alert('Creá un sobre primero'); return; }
+  const targets = uid==='__ALL__' ? PLAYERS : PLAYERS.filter(p=>p.id===uid);
+  if(!targets.length){ alert('No hay jugadores'); return; }
+  await Promise.all(targets.map(p=>{
+    const cur = (p.inv||{})[pid]||0;
+    return setDoc(doc(db,'players',p.id), { inv: { ...(p.inv||{}), [pid]: cur+q } }, { merge:true });
+  }));
+  alert(`Listo: ${q} sobre(s) a ${targets.length} jugador(es).`);
+};
+$('#clearInv').onclick = async ()=>{
+  const uid = $('#userSel').value;
+  if(uid==='__ALL__'){ alert('Elegí un jugador específico para vaciar.'); return; }
+  if(!confirm('¿Vaciar inventario de este jugador?')) return;
+  await setDoc(doc(db,'players',uid), { inv: {} }, { merge:true });
+};
+</script>
+</body>
+</html>

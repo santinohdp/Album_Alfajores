@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>¡Alfa-Álbum Argentino! – Edición de Leyendas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=IM+Fell+English:ital@0;1&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#e9d6a6;--paper-2:#d8bf85;--ink:#3a2a14;--ink-soft:#5b4326;
+    --gold:#c9a24a;--gold-hi:#f0d27a;--silver:#c9ccd1;--silver-hi:#eef1f5;
+    --coke:#c8102e;--frame:#7a4a1f;--frame-dark:#3f2510;--wood:#3b2412;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:'IM Fell English', Georgia, serif;color:var(--ink);overflow:hidden}
+  body{
+    background:
+      radial-gradient(ellipse at 80% 0%, rgba(255,210,140,.35), transparent 55%),
+      radial-gradient(ellipse at 20% 100%, rgba(0,0,0,.55), transparent 60%),
+      repeating-linear-gradient(90deg, #4a2d16 0 18px, #3b2412 18px 36px, #2e1c0d 36px 54px),
+      #2e1c0d;
+    background-blend-mode: multiply, normal, normal, normal;
+  }
+  .lamp{position:fixed;right:-80px;top:-120px;width:520px;height:520px;pointer-events:none;
+    background:radial-gradient(circle at 30% 30%, rgba(255,220,150,.55), rgba(255,180,90,.2) 35%, transparent 60%);
+    filter:blur(2px);z-index:1;}
+  .lamp svg{position:absolute;right:60px;top:80px;width:240px;opacity:.9}
+  .prop{position:fixed;z-index:2;pointer-events:none;filter:drop-shadow(0 18px 14px rgba(0,0,0,.55))}
+  .prop.mate{left:24px;bottom:24px;width:200px}
+  .prop.phone{right:40px;bottom:90px;width:180px}
+  .prop.wrap1{left:30px;top:46%;width:160px;transform:rotate(-12deg);opacity:.9}
+  .prop.wrap2{right:30px;top:36%;width:150px;transform:rotate(14deg);opacity:.9}
+  .prop.crumbs{right:170px;bottom:20px;width:220px;opacity:.85}
+
+  .hud{position:fixed;left:24px;top:22px;z-index:5;width:300px;padding:14px 16px;color:var(--ink);
+    background:radial-gradient(ellipse at 10% 10%, rgba(255,255,255,.25), transparent 60%),
+      linear-gradient(180deg,#e9d29a,#c9a868);
+    border:2px solid #6b4a22;border-radius:6px;
+    box-shadow: 0 14px 30px rgba(0,0,0,.55), inset 0 0 0 1px rgba(0,0,0,.15);
+    transform:rotate(-3deg);font-family:'Cinzel',serif;}
+  .hud .row{display:flex;align-items:center;gap:10px}
+  .hud .avatar{width:46px;height:46px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#fff6cc,#a07a3a 70%,#5a3a14);
+    border:2px solid #4a2d10;display:grid;place-items:center;font-size:22px;color:#3a2a14;}
+  .hud h2{margin:0;font-size:14px;letter-spacing:.08em}
+  .hud .sub{font-size:11px;letter-spacing:.18em;opacity:.85}
+  .hud .pct{font-family:'UnifrakturCook',serif;font-size:38px;line-height:1;margin-top:8px}
+  .hud .bar{height:8px;border:1px solid #5b3a14;background:#f2dca6;border-radius:6px;overflow:hidden;margin-top:6px}
+  .hud .bar > i{display:block;height:100%;background:linear-gradient(90deg,#8a5a1c,#d6a14a)}
+
+  .title{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:6;
+    padding:10px 36px;color:#f6e6b6;font-family:'Cinzel',serif;font-weight:800;letter-spacing:.12em;
+    background:linear-gradient(180deg,#3a2410,#1d1108);border:2px solid #c9a24a;border-radius:10px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.6), inset 0 0 24px rgba(201,162,74,.25);
+    text-shadow:0 2px 0 #000, 0 0 14px rgba(240,210,122,.4);
+    font-size:18px;white-space:nowrap;}
+
+  .stage{position:fixed;inset:0;display:grid;place-items:center;z-index:3;padding:90px 40px 170px;}
+  .book{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:0;
+    width:min(1180px, 94vw);height:min(720px, 78vh);
+    background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,.0), rgba(0,0,0,.25) 80%),
+      linear-gradient(180deg,#8a5a24,#5a3614);
+    border-radius:18px;padding:24px 26px;
+    box-shadow: 0 40px 60px rgba(0,0,0,.65), inset 0 0 0 4px #c9a24a,
+      inset 0 0 0 8px #5a3614, inset 0 0 0 10px #2a1808;}
+  .book::before, .book::after{content:"";position:absolute;top:18px;bottom:18px;width:18px;
+    background:linear-gradient(180deg,#c9a24a,#7a4a1f);
+    border-radius:4px;box-shadow:inset 0 0 0 1px #3a2410;}
+  .book::before{left:50%;transform:translateX(-50%);width:14px;background:linear-gradient(180deg,#3a2410,#1c1006)}
+  .page{position:relative;
+    background:radial-gradient(ellipse at 10% 0%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(ellipse at 90% 100%, rgba(80,40,10,.25), transparent 55%),
+      linear-gradient(180deg,#efdaa6,#d8bf85);
+    border-radius:8px;padding:22px 22px 18px;
+    box-shadow: inset 0 0 60px rgba(120,80,30,.35), inset 0 0 0 1px rgba(120,80,30,.35);
+    overflow:hidden;}
+  .page.left{border-right:1px dashed rgba(90,60,20,.4)}
+  .page h3{margin:0 0 10px;font-family:'Cinzel',serif;text-align:center;letter-spacing:.16em;font-size:14px;color:var(--ink-soft)}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .slot{position:relative;aspect-ratio:3/4;
+    background:radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.3), transparent 60%),
+      linear-gradient(180deg,#e6cf95,#c9a868);
+    border:1px solid #8a6024;border-radius:6px;
+    box-shadow: inset 0 0 18px rgba(120,80,30,.35);
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    padding:6px 4px;font-size:10px;text-align:center;color:#5b4326;overflow:hidden;}
+  .slot .num{position:absolute;top:3px;left:5px;font-family:'Cinzel',serif;font-size:9px;opacity:.7}
+  .slot .art{flex:1;display:grid;place-items:center;width:100%}
+  .slot .name{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.04em;line-height:1.1;padding:0 2px 2px;min-height:22px}
+  .slot.empty .art::before{content:"?";font-family:'UnifrakturCook',serif;font-size:38px;color:rgba(90,60,20,.35)}
+  .slot.have.classic{box-shadow: inset 0 0 18px rgba(120,80,30,.35), inset 0 0 0 2px #6b3a14}
+  .slot.have.coke{box-shadow: inset 0 0 18px rgba(120,30,30,.45), inset 0 0 0 2px var(--coke); background:linear-gradient(180deg,#f6c9c9,#c8102e22)}
+  .slot.have.silver{box-shadow: inset 0 0 22px rgba(180,200,220,.6), inset 0 0 0 2px #8a98a8; background:linear-gradient(180deg,#eef1f5,#c9ccd1)}
+  .slot.have.gold{box-shadow: 0 0 18px rgba(240,210,122,.55), inset 0 0 22px rgba(255,220,120,.6), inset 0 0 0 2px #b8862a; background:linear-gradient(180deg,#fff0b8,#d6a14a); animation:goldPulse 2.4s ease-in-out infinite}
+  @keyframes goldPulse{50%{box-shadow:0 0 28px rgba(240,210,122,.85),inset 0 0 26px rgba(255,230,140,.85),inset 0 0 0 2px #c9a24a}}
+  .alf{width:62%;height:auto;filter:drop-shadow(0 2px 1px rgba(0,0,0,.3))}
+
+  .nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:54px;display:grid;place-items:center;cursor:pointer;
+    background:linear-gradient(180deg,#c9a24a,#7a4a1f);border:2px solid #3a2410;border-radius:6px;
+    color:#2a1808;font-size:22px;z-index:7;user-select:none;box-shadow:0 6px 12px rgba(0,0,0,.5)}
+  .nav:hover{filter:brightness(1.1)}
+  .nav.prev{left:-22px} .nav.next{right:-22px}
+
+  .actions{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:6;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:96vw}
+  .plaque{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;
+    color:#f6e6b6;font-family:'Cinzel',serif;letter-spacing:.1em;font-weight:700;
+    background:linear-gradient(180deg,#3a2410,#1d1108);border:2px solid #c9a24a;border-radius:10px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.55), inset 0 0 18px rgba(201,162,74,.2);
+    text-shadow:0 1px 0 #000;font-size:13px;}
+  .plaque small{display:block;font-family:'IM Fell English',serif;font-weight:400;font-size:10px;opacity:.85;letter-spacing:.05em}
+  .plaque .ico{font-size:20px}
+
+  .tabbar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;
+    display:flex;gap:6px;padding:6px 12px;
+    background:linear-gradient(180deg,#5a5a60,#2a2a30);border:2px solid #c9a24a;border-radius:12px;
+    box-shadow:0 10px 24px rgba(0,0,0,.6);
+    color:#eee;font-family:'Cinzel',serif;letter-spacing:.1em;font-size:10px;max-width:96vw;overflow-x:auto;}
+  .tabbar button{background:transparent;border:none;color:#eee;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 10px;font:inherit;letter-spacing:inherit;white-space:nowrap;}
+  .tabbar button.active{color:#f0d27a;text-shadow:0 0 8px rgba(240,210,122,.55)}
+  .tabbar .ico{font-size:16px}
+
+  .veil{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(4px)}
+  .veil.show{display:flex}
+  .modal{width:min(620px,94vw);max-height:88vh;overflow:auto;padding:22px 22px 18px;color:#f6e6b6;text-align:center;
+    background:linear-gradient(180deg,#3a2410,#1a0f06);border:2px solid #c9a24a;border-radius:14px;
+    box-shadow:0 30px 60px rgba(0,0,0,.7), inset 0 0 24px rgba(201,162,74,.18);
+    font-family:'Cinzel',serif;}
+  .modal h2{margin:0 0 10px;letter-spacing:.14em}
+  .packs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:14px 0}
+  .pack{cursor:pointer;padding:10px;border:2px solid #c9a24a;border-radius:10px;
+    background:linear-gradient(180deg,#5a3614,#2a1808);color:#f6e6b6;font-size:12px;letter-spacing:.08em;
+    display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .pack:hover{filter:brightness(1.15);transform:translateY(-2px);transition:.15s}
+  .pack .qty{font-family:'UnifrakturCook',serif;font-size:22px;color:#f0d27a}
+  .btn{display:inline-block;margin-top:6px;padding:8px 18px;cursor:pointer;
+    background:linear-gradient(180deg,#c9a24a,#7a4a1f);color:#2a1808;border:2px solid #3a2410;border-radius:8px;
+    font-family:'Cinzel',serif;letter-spacing:.12em;font-weight:700;}
+  .btn.ghost{background:transparent;color:#f6e6b6;border-color:#c9a24a}
+  .btn.sm{padding:5px 10px;font-size:11px;letter-spacing:.06em}
+
+  .reveal{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+  .card{aspect-ratio:3/4;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    padding:6px;font-size:10px;color:#3a2a14;text-align:center;
+    background:linear-gradient(180deg,#e6cf95,#c9a868);border:1px solid #8a6024;
+    transform:scale(.6);opacity:0;animation:pop .5s forwards;}
+  .card.coke{background:linear-gradient(180deg,#f6c9c9,#e88a8a);border-color:var(--coke)}
+  .card.silver{background:linear-gradient(180deg,#eef1f5,#c9ccd1);border-color:#8a98a8}
+  .card.gold{background:linear-gradient(180deg,#fff0b8,#d6a14a);border-color:#b8862a;box-shadow:0 0 18px rgba(240,210,122,.7)}
+  .card.dup{outline:2px dashed rgba(0,0,0,.35)}
+  .card .tag{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.06em}
+  @keyframes pop{to{transform:scale(1);opacity:1}}
+
+  .tag-rarity{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.1em;padding:1px 5px;border-radius:99px;background:rgba(0,0,0,.15)}
+
+  .sections{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:6;
+    display:flex;gap:6px;padding:6px 10px;border-radius:10px;
+    background:linear-gradient(180deg,#3a2410cc,#1d1108cc);border:1px solid #c9a24a;flex-wrap:wrap;justify-content:center;max-width:94vw}
+  .sections button{background:transparent;border:1px solid transparent;color:#e9d6a6;
+    font-family:'Cinzel',serif;font-size:11px;letter-spacing:.12em;padding:5px 12px;border-radius:6px;cursor:pointer;}
+  .sections button.active{background:#c9a24a;color:#2a1808;border-color:#3a2410}
+  .empty-msg{text-align:center;color:#f6e6b6;font-family:'Cinzel',serif;letter-spacing:.1em;margin:18px 0}
+
+  /* ====== PORTADA (álbum cerrado) ====== */
+  .coverStage{position:fixed;inset:0;z-index:4;display:none;place-items:center;padding:80px 20px 160px;}
+  .coverStage.show{display:grid}
+  .coverBook{
+    position:relative;width:min(640px,86vw);aspect-ratio:5/4;border-radius:14px;
+    background:radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.45), transparent 60%),
+      linear-gradient(180deg,#f0dca6,#cdb074);
+    border:14px solid #6b4a22;
+    box-shadow: 0 40px 80px rgba(0,0,0,.7), inset 0 0 40px rgba(120,80,30,.5),
+      inset 0 0 0 3px #c9a24a;
+    padding:24px 30px;font-family:'Cinzel',serif;color:#3a2a14;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;
+    transition:transform .25s;
+  }
+  .coverBook:hover{transform:translateY(-4px) rotate(-.5deg)}
+  .coverBook .ribbon{
+    position:relative;padding:8px 22px;color:#fff;font-weight:800;letter-spacing:.16em;font-size:12px;
+    background:linear-gradient(180deg,#3a78c8,#1f4f8a);border:2px solid #fff;border-radius:4px;
+    box-shadow:0 4px 10px rgba(0,0,0,.4);
+  }
+  .coverBook .ribbon::before,.coverBook .ribbon::after{
+    content:"";position:absolute;top:0;width:30px;height:100%;background:inherit;border:inherit;
+  }
+  .coverBook .ribbon::before{left:-34px;clip-path:polygon(0 0,100% 0,80% 50%,100% 100%,0 100%)}
+  .coverBook .ribbon::after{right:-34px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,20% 50%)}
+  .coverBook .sun{font-size:38px;margin-top:-6px}
+  .coverBook .titleBig{
+    font-family:'UnifrakturCook',serif;font-size:clamp(34px,6vw,56px);line-height:1;
+    color:#fff;text-shadow:0 2px 0 #2a1808, 0 0 18px rgba(255,210,120,.7);
+    padding:10px 28px;background:linear-gradient(180deg,#3a78c8,#1f4f8a);border:3px solid #c9a24a;border-radius:8px;
+    margin:8px 0;
+  }
+  .coverBook .subBig{font-size:11px;letter-spacing:.14em;color:#3a78c8;background:#fff;padding:6px 16px;border-radius:99px;border:1px solid #3a78c8}
+  .coverBook .medal{
+    width:140px;height:140px;border-radius:50%;
+    background:radial-gradient(circle,#fff0a8 0%,#f0c860 55%,#9a6a20 100%);
+    border:5px solid #c9a24a;display:grid;place-items:center;font-size:60px;
+    box-shadow:0 6px 16px rgba(0,0,0,.4), inset 0 0 20px rgba(255,255,255,.5);
+  }
+  .coverBook .brands{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;font-size:10px;color:#7a4a1f;letter-spacing:.1em}
+  .coverBook .brands b{padding:2px 8px;border:1px solid #8a6024;border-radius:99px;background:#f0dca6}
+  .coverBook .footer{
+    padding:8px 18px;background:#f6e6b6;border:2px solid #8a6024;border-radius:6px;font-size:11px;letter-spacing:.12em;color:#3a2a14;
+    box-shadow: inset 0 0 12px rgba(120,80,30,.25);
+  }
+  .coverBook .openHint{margin-top:6px;font-size:10px;letter-spacing:.16em;color:#7a4a1f;animation:blink 2s infinite}
+  @keyframes blink{50%{opacity:.4}}
+
+  /* sobres flotando alrededor */
+  .floatPack{position:fixed;z-index:3;pointer-events:none;width:120px;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+
+  @media (max-width:900px){
+    .prop,.lamp{display:none}
+    .hud{position:static;margin:80px auto 0;transform:none}
+    .book{grid-template-columns:1fr;height:auto}
+    .page.left{border-right:none;border-bottom:1px dashed rgba(90,60,20,.4)}
+    .grid{grid-template-columns:repeat(3,1fr)}
+    .actions{bottom:78px}
+  }
+</style>
+</head>
+<body>
+<div class="lamp">
+  <svg viewBox="0 0 200 200" fill="none"><path d="M30 20 L170 20 L150 80 L50 80 Z" fill="#c9a24a" stroke="#6b4a22" stroke-width="3"/><rect x="92" y="80" width="16" height="40" fill="#6b4a22"/></svg>
+</div>
+
+<svg class="prop mate" viewBox="0 0 200 220"><defs><radialGradient id="mg" cx=".4" cy=".3"><stop offset="0" stop-color="#caa06a"/><stop offset="1" stop-color="#5a3614"/></radialGradient></defs><ellipse cx="100" cy="140" rx="78" ry="70" fill="url(#mg)" stroke="#2a1808" stroke-width="3"/><path d="M40 130 Q100 90 160 130" stroke="#3a2410" stroke-width="2" fill="none"/><rect x="90" y="40" width="10" height="80" fill="#cfcfd4" stroke="#3a2410" stroke-width="2"/><ellipse cx="95" cy="110" rx="50" ry="14" fill="#6e8a2a"/><circle cx="92" cy="44" r="10" fill="#cfcfd4" stroke="#3a2410" stroke-width="2"/></svg>
+<svg class="prop phone" viewBox="0 0 200 360"><rect x="10" y="10" width="180" height="340" rx="28" fill="#1a1a1e" stroke="#000" stroke-width="3"/><rect x="22" y="40" width="156" height="270" rx="6" fill="#2a1808"/><radialGradient id="ph" cx=".5" cy=".5"><stop offset="0" stop-color="#fff0b8"/><stop offset=".5" stop-color="#d6a14a"/><stop offset="1" stop-color="#2a1808"/></radialGradient><circle cx="100" cy="175" r="120" fill="url(#ph)" opacity=".9" clip-path="inset(40px 22px 50px 22px round 6px)"/><circle cx="100" cy="175" r="28" fill="#3a2410"/><circle cx="100" cy="330" r="12" fill="none" stroke="#444" stroke-width="2"/></svg>
+<svg class="prop wrap1" viewBox="0 0 200 140"><path d="M10 30 L190 20 L185 120 L15 110 Z" fill="#f2e3c4" stroke="#8a6024" stroke-width="2"/><path d="M30 50 H170 M30 70 H170 M30 90 H120" stroke="#8a6024" stroke-width="1.5" opacity=".6"/></svg>
+<svg class="prop wrap2" viewBox="0 0 200 140"><path d="M10 20 L190 30 L180 120 L20 110 Z" fill="#e8d6a8" stroke="#8a6024" stroke-width="2"/><circle cx="100" cy="70" r="28" fill="#6b3a14"/></svg>
+<svg class="prop crumbs" viewBox="0 0 300 80"><circle cx="40" cy="50" r="22" fill="#6b3a14"/><circle cx="90" cy="40" r="16" fill="#8a5a24"/><circle cx="150" cy="55" r="26" fill="#5a3614"/><circle cx="210" cy="45" r="20" fill="#7a4a1f"/><circle cx="260" cy="55" r="14" fill="#6b3a14"/></svg>
+
+<!-- sobres flotando solo en portada cerrada -->
+<svg class="floatPack" id="fp1" style="left:5%;top:30%;transform:rotate(-12deg);display:none" viewBox="0 0 120 160"><rect x="6" y="6" width="108" height="148" rx="6" fill="#f0dca6" stroke="#6b4a22" stroke-width="3"/><text x="60" y="40" text-anchor="middle" font-family="Cinzel" font-size="9" fill="#3a2a14" font-weight="800">SOBRE DE</text><text x="60" y="54" text-anchor="middle" font-family="Cinzel" font-size="9" fill="#3a2a14" font-weight="800">FIGURITAS</text><rect x="14" y="68" width="92" height="34" rx="4" fill="#1f4f8a" stroke="#c9a24a" stroke-width="2"/><text x="60" y="92" text-anchor="middle" font-family="UnifrakturCook" font-size="16" fill="#fff">ALFA-ÁLBUM</text><circle cx="60" cy="130" r="14" fill="#f0c860" stroke="#9a6a20" stroke-width="2"/></svg>
+<svg class="floatPack" id="fp2" style="right:6%;bottom:14%;transform:rotate(10deg);display:none" viewBox="0 0 120 160"><rect x="6" y="6" width="108" height="148" rx="6" fill="#e8d6a8" stroke="#6b4a22" stroke-width="3"/><rect x="14" y="40" width="92" height="34" rx="4" fill="#c8102e" stroke="#c9a24a" stroke-width="2"/><text x="60" y="62" text-anchor="middle" font-family="Cinzel" font-size="10" fill="#fff" font-weight="800">COCA-COLA</text><circle cx="60" cy="110" r="22" fill="#6b3a14"/></svg>
+
+<div class="title">¡ALFA-ÁLBUM ARGENTINO! · EDICIÓN DE LEYENDAS</div>
+
+<div class="hud" id="hud">
+  <div class="row">
+    <div class="avatar">★</div>
+    <div>
+      <h2 id="hudName">COLECCIONISTA</h2>
+      <div class="sub" id="hudCount">0 / 0 RECOLECTADAS</div>
+    </div>
+  </div>
+  <div class="pct" id="hudPct">0%</div>
+  <div class="bar"><i id="hudBar" style="width:0%"></i></div>
+</div>
+
+<div class="sections" id="sections"></div>
+
+<!-- Álbum abierto -->
+<div class="stage" id="albumStage">
+  <div class="book">
+    <div class="nav prev" id="prev">‹</div>
+    <div class="page left">
+      <h3 id="lhead">Página 1</h3>
+      <div class="grid" id="leftGrid"></div>
+    </div>
+    <div class="page right">
+      <h3 id="rhead">Página 2</h3>
+      <div class="grid" id="rightGrid"></div>
+    </div>
+    <div class="nav next" id="next">›</div>
+  </div>
+</div>
+
+<!-- Álbum cerrado / Portada -->
+<div class="coverStage" id="coverStage">
+  <div class="coverBook" id="coverBook">
+    <div class="ribbon" id="covRibbon">ARGENTINA</div>
+    <div class="sun">☀</div>
+    <div class="titleBig">¡ALFA-ÁLBUM!</div>
+    <div class="subBig" id="covSub">EL ÁLBUM DE LAS LEYENDAS DEL ALFAJOR ARGENTINO</div>
+    <div class="medal">🍪</div>
+    <div class="brands" id="covBrands"></div>
+    <div class="footer" id="covFooter">CONTENIDO: 0 FIGURITAS · 0 PÁGINAS</div>
+    <div class="openHint">▸ TOCÁ PARA ABRIR ◂</div>
+  </div>
+</div>
+
+<!-- Actions -->
+<div class="actions">
+  <div class="plaque" id="toggleAlbum"><span class="ico">📕</span><div>CERRAR<small>Ver portada</small></div></div>
+  <div class="plaque" id="openTesoros"><span class="ico">🗝</span><div>TESOROS<small>Abrir sobres</small></div></div>
+  <div class="plaque" id="openTrueques"><span class="ico">🤝</span><div>TRUEQUES<small>Cambios entre jugadores</small></div></div>
+  <div class="plaque" id="openTeam"><span class="ico">⚽</span><div>EQUIPO<small>Hasta 11 amigos</small></div></div>
+</div>
+
+<!-- Tabbar -->
+<div class="tabbar">
+  <button data-tab="inicio"><span class="ico">🧭</span>INICIO</button>
+  <button data-tab="album" class="active"><span class="ico">📖</span>ÁLBUM</button>
+  <button data-tab="tesoros"><span class="ico">🗝</span>TESOROS</button>
+  <button data-tab="trueques"><span class="ico">🤝</span>TRUEQUES</button>
+  <button data-tab="team"><span class="ico">⚽</span>EQUIPO</button>
+  <button data-tab="perfil"><span class="ico">🗺</span>PERFIL</button>
+</div>
+
+<!-- Modal -->
+<div class="veil" id="veil"><div class="modal" id="modal"></div></div>
+
+<!-- Login Gate -->
+<div class="veil show" id="authVeil" style="z-index:50">
+  <div class="modal" style="max-width:380px">
+    <h2 id="authTitle">INICIAR SESIÓN</h2>
+    <p style="font-size:11px;opacity:.8;letter-spacing:.1em">Tu álbum se guarda en la nube</p>
+    <div style="display:grid;gap:8px;margin:14px 0;text-align:left">
+      <input id="authName" placeholder="Nombre (solo registro)" style="display:none;padding:9px;background:#1a0f06;border:1px solid #c9a24a;color:#f6e6b6;border-radius:6px;font:inherit"/>
+      <input id="authEmail" type="email" placeholder="Email" style="padding:9px;background:#1a0f06;border:1px solid #c9a24a;color:#f6e6b6;border-radius:6px;font:inherit"/>
+      <input id="authPass" type="password" placeholder="Contraseña (6+)" style="padding:9px;background:#1a0f06;border:1px solid #c9a24a;color:#f6e6b6;border-radius:6px;font:inherit"/>
+      <div id="authErr" style="color:#ff8a8a;font-size:11px;min-height:14px"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" id="authGo">Entrar</button>
+      <button class="btn ghost" id="authSwitch">Crear cuenta</button>
+    </div>
+    <p style="font-size:10px;opacity:.6;margin-top:14px">Si ves "auth/configuration-not-found": activá Email/Password en Firebase Console → Authentication → Sign-in method.</p>
+  </div>
+</div>
+
+<script type="module">
+import {
+  db, doc, collection, onSnapshot, setDoc, getDoc, addDoc, deleteDoc, updateDoc,
+  query, where,
+  auth, onAuthStateChanged, signInWithEmailAndPassword,
+  createUserWithEmailAndPassword, signOut, updateProfile, deleteUser
+} from "./firebase.js";
+
+/* ============== AUTH ============== */
+let CURRENT_USER = null;
+let playerRef = null;
+let unsubPlayer = null;
+let myPlayer = {};        // doc actual
+let authMode = 'login';
+
+const authVeil = document.getElementById('authVeil');
+const authErr  = document.getElementById('authErr');
+const showAuthErr = m => authErr.textContent = m || '';
+function setMode(m){
+  authMode = m;
+  document.getElementById('authTitle').textContent = m==='login'?'INICIAR SESIÓN':'CREAR CUENTA';
+  document.getElementById('authGo').textContent    = m==='login'?'Entrar':'Registrarme';
+  document.getElementById('authSwitch').textContent= m==='login'?'Crear cuenta':'Ya tengo cuenta';
+  document.getElementById('authName').style.display= m==='signup'?'block':'none';
+  showAuthErr('');
+}
+document.getElementById('authSwitch').onclick = ()=> setMode(authMode==='login'?'signup':'login');
+document.getElementById('authGo').onclick = async ()=>{
+  const email = document.getElementById('authEmail').value.trim();
+  const pass  = document.getElementById('authPass').value;
+  const name  = document.getElementById('authName').value.trim();
+  if(!email || !pass){ showAuthErr('Completá email y contraseña'); return; }
+  try{
+    if(authMode==='signup'){
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      if(name) await updateProfile(cred.user, { displayName:name });
+      await setDoc(doc(db,'players',cred.user.uid), {
+        name: name || email.split('@')[0], email, owned:{}, inv:{}, teamId:null, createdAt: Date.now()
+      }, { merge:true });
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
+    }
+  }catch(e){
+    let msg = e.message.replace('Firebase: ','');
+    if(e.code==='auth/configuration-not-found')
+      msg = 'Activá Email/Password en Firebase Console → Authentication → Sign-in method.';
+    showAuthErr(msg);
+  }
+};
+
+onAuthStateChanged(auth, async (user)=>{
+  CURRENT_USER = user;
+  if(unsubPlayer){ unsubPlayer(); unsubPlayer = null; }
+  if(!user){
+    playerRef = null; owned = {}; inv = {}; myPlayer = {};
+    authVeil.classList.add('show'); return;
+  }
+  authVeil.classList.remove('show');
+  playerRef = doc(db,'players',user.uid);
+  const snap = await getDoc(playerRef);
+  if(!snap.exists()){
+    await setDoc(playerRef, {
+      name: user.displayName || (user.email||'').split('@')[0],
+      email: user.email||'', owned:{}, inv:{}, teamId:null, createdAt: Date.now()
+    });
+  }
+  document.getElementById('hudName').textContent =
+    (user.displayName || (user.email||'').split('@')[0] || 'COLECCIONISTA').toUpperCase();
+  unsubPlayer = onSnapshot(playerRef, async s=>{
+    const data = s.exists() ? s.data() : null;
+    if(!data || data.deleted){
+      // el admin eliminó esta cuenta — borrar todo y cerrar sesión
+      if(unsubPlayer){ unsubPlayer(); unsubPlayer=null; }
+      try{
+        await deleteDoc(playerRef);
+      }catch(e){}
+      try{
+        if(auth.currentUser) await deleteUser(auth.currentUser);
+        alert('Tu cuenta fue eliminada. Tenés que crear una nueva.');
+      }catch(e){
+        // requires-recent-login u otro
+        alert('Tu cuenta fue eliminada. Iniciá sesión otra vez para completar el borrado, o creá una nueva.');
+        try{ await signOut(auth); }catch(_){}
+      }
+      return;
+    }
+    myPlayer = data;
+    owned = myPlayer.owned || {};
+    inv   = myPlayer.inv   || {};
+    renderAlbum(); renderCover();
+  });
+});
+
+/* ============== ESTADO ============== */
+const SECTIONS = [
+  { id:'all', name:'TODO', rarity:null },
+  { id:'classic', name:'Clásicos', rarity:'classic'},
+  { id:'coke', name:'Coca-Cola', rarity:'coke'},
+  { id:'silver', name:'Plateados', rarity:'silver'},
+  { id:'gold', name:'Dorados', rarity:'gold'},
+];
+const RAR_WEIGHTS = { classic:62, coke:20, silver:13, gold:5 };
+const PER_PAGE = 8;
+
+let CARDS=[], PACKS=[], PLAYERS=[], TRADES=[];
+let owned={}, inv={};
+let activeSection='all', pageIndex=0;
+let albumClosed = false;
+
+/* ============== LISTENERS GLOBALES ============== */
+onSnapshot(collection(db,'cards'), s=>{
+  CARDS = s.docs.map(d=>({id:d.id,...d.data()}));
+  renderAlbum(); renderCover();
+});
+onSnapshot(collection(db,'packs'), s=> PACKS = s.docs.map(d=>({id:d.id,...d.data()})) );
+onSnapshot(collection(db,'players'), s=> PLAYERS = s.docs.map(d=>({id:d.id,...d.data()})) );
+onSnapshot(collection(db,'trades'), s=>{
+  TRADES = s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+});
+
+async function savePlayer(){
+  if(!playerRef) return;
+  await setDoc(playerRef,{owned,inv},{merge:true});
+}
+
+/* ============== PORTADA / ÁLBUM ============== */
+function setClosed(c){
+  albumClosed = c;
+  document.getElementById('albumStage').style.display  = c?'none':'grid';
+  document.getElementById('coverStage').classList.toggle('show',c);
+  document.getElementById('sections').style.display = c?'none':'flex';
+  document.getElementById('fp1').style.display = c?'block':'none';
+  document.getElementById('fp2').style.display = c?'block':'none';
+  document.querySelector('#toggleAlbum .ico').textContent = c?'📖':'📕';
+  document.querySelector('#toggleAlbum div').innerHTML = c
+    ? 'ABRIR<small>Ver páginas</small>' : 'CERRAR<small>Ver portada</small>';
+  if(c) renderCover();
+}
+function renderCover(){
+  const total = CARDS.length;
+  const have  = CARDS.filter(c=>(owned[c.id]||0)>0).length;
+  const pages = Math.max(1, Math.ceil(total / PER_PAGE));
+  document.getElementById('covFooter').textContent =
+    `CONTENIDO: ${total} FIGURITAS · ${pages} PÁGINAS · ${have} TENÉS`;
+  // marcas: top 6 nombres únicos (por palabras del name)
+  const brandSet = new Set();
+  for(const c of CARDS){
+    if(!c.name) continue;
+    const first = c.name.split(/\s+/)[0];
+    if(first) brandSet.add(first);
+    if(brandSet.size>=6) break;
+  }
+  document.getElementById('covBrands').innerHTML =
+    [...brandSet].map(b=>`<b>${b}</b>`).join('') || '<b>HAVANNA</b><b>JORGITO</b><b>GUAYMALLÉN</b>';
+  document.getElementById('covSub').textContent =
+    total ? 'EL ÁLBUM DE LAS LEYENDAS DEL ALFAJOR ARGENTINO' : 'Esperá a que el panel cree figuritas…';
+}
+document.getElementById('toggleAlbum').onclick = ()=> setClosed(!albumClosed);
+document.getElementById('coverBook').onclick   = ()=> setClosed(false);
+
+/* ============== ÁLBUM ABIERTO ============== */
+function filteredCards(){
+  if(activeSection==='all') return CARDS;
+  return CARDS.filter(c=>c.rarity===activeSection);
+}
+function pages(){
+  const list = filteredCards(), out=[];
+  for(let i=0;i<list.length;i+=PER_PAGE)
+    out.push({title:'Página '+(out.length+1), slots:list.slice(i,i+PER_PAGE)});
+  if(!out.length) out.push({title:'—', slots:[]});
+  return out;
+}
+function renderSections(){
+  const c=document.getElementById('sections');
+  c.innerHTML = SECTIONS.map(t=>`<button data-s="${t.id}" class="${activeSection===t.id?'active':''}">${t.name.toUpperCase()}</button>`).join('');
+  c.querySelectorAll('button').forEach(b=>b.onclick=()=>{activeSection=b.dataset.s;pageIndex=0;renderSections();renderAlbum()});
+}
+function alfajorSVG(c){
+  if(c.image) return `<img src="${c.image}" alt="${c.name}" style="max-width:100%;max-height:100%;border-radius:6px;object-fit:cover"/>`;
+  const palette = {
+    classic:{coat:'#3a1f10',coat2:'#1b0c05',cream:'#f3e0b0',cream2:'#c79a55',drip:'#2a160a'},
+    coke:   {coat:'#8c0d20',coat2:'#4a0612',cream:'#fde2e2',cream2:'#e88a8a',drip:'#5a0814'},
+    silver: {coat:'#cfd5dd',coat2:'#8a98a8',cream:'#ffffff',cream2:'#d8dde4',drip:'#6f7a88'},
+    gold:   {coat:'#caa24a',coat2:'#7a4e14',cream:'#fff3c4',cream2:'#e6c067',drip:'#6a4210'}
+  }[c.rarity] || {coat:'#3a1f10',coat2:'#1b0c05',cream:'#f3e0b0',cream2:'#c79a55',drip:'#2a160a'};
+  const uid = 'a'+Math.random().toString(36).slice(2,8);
+  return `<svg class="alf" viewBox="0 0 100 100" style="width:78%">
+    <defs>
+      <radialGradient id="top${uid}" cx=".35" cy=".3" r=".8">
+        <stop offset="0" stop-color="${palette.coat}" stop-opacity=".0"/>
+        <stop offset=".4" stop-color="${palette.coat}" stop-opacity=".0"/>
+        <stop offset="1" stop-color="${palette.coat2}" stop-opacity=".55"/>
+      </radialGradient>
+      <radialGradient id="hl${uid}" cx=".3" cy=".25" r=".5">
+        <stop offset="0" stop-color="#ffffff" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="cr${uid}" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stop-color="${palette.cream}"/>
+        <stop offset="1" stop-color="${palette.cream2}"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="50" cy="84" rx="36" ry="6" fill="#000" opacity=".35"/>
+    <!-- tapa inferior -->
+    <ellipse cx="50" cy="68" rx="36" ry="10" fill="${palette.coat2}"/>
+    <rect x="14" y="50" width="72" height="20" fill="${palette.coat2}"/>
+    <!-- relleno (dulce de leche / crema) -->
+    <rect x="14" y="48" width="72" height="6" fill="url(#cr${uid})"/>
+    <ellipse cx="50" cy="48" rx="36" ry="3.5" fill="${palette.cream}"/>
+    <ellipse cx="50" cy="54" rx="36" ry="3.5" fill="${palette.cream2}" opacity=".7"/>
+    <!-- chorrito de baño -->
+    <path d="M14 38 Q22 50 30 40 Q38 52 46 40 Q54 50 62 38 Q70 52 78 40 Q84 50 86 42 L86 50 L14 50 Z" fill="${palette.drip}"/>
+    <!-- tapa superior -->
+    <ellipse cx="50" cy="38" rx="36" ry="10" fill="${palette.coat}"/>
+    <ellipse cx="50" cy="38" rx="36" ry="10" fill="url(#top${uid})"/>
+    <!-- brillo -->
+    <ellipse cx="40" cy="32" rx="20" ry="5" fill="url(#hl${uid})"/>
+    <!-- detalle granillo si rareza no clásica -->
+    ${c.rarity==='gold'?'<g fill="#fff7c8" opacity=".9"><circle cx="36" cy="34" r="1.2"/><circle cx="56" cy="36" r="1.1"/><circle cx="64" cy="33" r="1.3"/><circle cx="46" cy="38" r="1"/></g>':''}
+    ${c.rarity==='silver'?'<g fill="#fff" opacity=".7"><circle cx="36" cy="34" r="1"/><circle cx="58" cy="36" r="1"/><circle cx="48" cy="38" r="1"/></g>':''}
+  </svg>`;
+}
+function slotHTML(c,idx){
+  const have=(owned[c.id]||0)>0;
+  const cls=have?`have ${c.rarity}`:'empty';
+  return `<div class="slot ${cls}" title="${c.name}">
+    <span class="num">#${idx+1}</span>
+    <div class="art">${have?alfajorSVG(c):''}</div>
+    <div class="name">${have?c.name:''}</div>
+    ${have && owned[c.id]>1?`<span class="tag-rarity">x${owned[c.id]}</span>`:''}
+  </div>`;
+}
+function renderAlbum(){
+  const pgs=pages();
+  if(pageIndex>=pgs.length) pageIndex=Math.max(0,pgs.length-1);
+  const L=pgs[pageIndex]||{title:'—',slots:[]};
+  const R=pgs[pageIndex+1]||{title:'',slots:[]};
+  document.getElementById('lhead').textContent=L.title;
+  document.getElementById('rhead').textContent=R.title;
+  document.getElementById('leftGrid').innerHTML  = L.slots.length
+    ? L.slots.map((c,i)=>slotHTML(c,pageIndex*PER_PAGE+i)).join('')
+    : '<div class="empty-msg">Sin cartas todavía.<br>Creálas desde el Panel.</div>';
+  document.getElementById('rightGrid').innerHTML = R.slots.map((c,i)=>slotHTML(c,(pageIndex+1)*PER_PAGE+i)).join('');
+  renderHUD();
+}
+function renderHUD(){
+  const list=filteredCards(), total=list.length;
+  const have=list.filter(c=>(owned[c.id]||0)>0).length;
+  const pct=total?Math.round((have/total)*100):0;
+  document.getElementById('hudCount').textContent=`${have} / ${total} RECOLECTADAS`;
+  document.getElementById('hudPct').textContent=pct+'%';
+  document.getElementById('hudBar').style.width=pct+'%';
+}
+document.getElementById('prev').onclick=()=>{pageIndex=Math.max(0,pageIndex-2);renderAlbum()};
+document.getElementById('next').onclick=()=>{const p=pages();pageIndex=Math.min(Math.max(0,p.length-1),pageIndex+2);renderAlbum()};
+
+/* ============== TESOROS ============== */
+function showTesoros(){
+  openModal(`
+    <h2>¡TESOROS!</h2>
+    <p style="opacity:.85;font-size:12px;letter-spacing:.1em">Abrí los sobres que te enviaron desde el Panel</p>
+    <div class="packs">
+      ${PACKS.length===0?'<p style="opacity:.7">No hay sobres definidos.</p>':
+        PACKS.map(p=>`
+          <div class="pack" data-id="${p.id}">
+            <div style="font-size:13px">${p.name}</div>
+            <div class="qty">x${inv[p.id]||0}</div>
+            <div style="font-size:10px;opacity:.75">${p.size} cartas</div>
+            <div style="font-size:9px;opacity:.6">${(p.allowed||[]).join(' · ')}</div>
+          </div>`).join('')}
+    </div>
+    <button class="btn ghost" id="closeM">Cerrar</button>`);
+  document.querySelectorAll('.pack').forEach(el=>el.onclick=()=>openPack(el.dataset.id));
+  document.getElementById('closeM').onclick=closeModal;
+}
+function weightedPickRarity(allowed){
+  const e=allowed.map(r=>[r,RAR_WEIGHTS[r]||1]); const t=e.reduce((a,[,w])=>a+w,0);
+  let r=Math.random()*t; for(const[k,w]of e){if((r-=w)<=0)return k} return e[0][0];
+}
+function pickCard(allowed){
+  const tries=[...allowed];
+  while(tries.length){
+    const r=weightedPickRarity(tries);
+    const pool=CARDS.filter(c=>c.rarity===r);
+    if(pool.length) return pool[Math.floor(Math.random()*pool.length)];
+    tries.splice(tries.indexOf(r),1);
+  } return null;
+}
+async function openPack(pid){
+  const pack=PACKS.find(p=>p.id===pid); if(!pack) return;
+  if((inv[pid]||0)<=0){
+    openModal('<h2>Sin sobres</h2><p>No te quedan sobres de este tipo.</p><button class="btn" id="ok">Ok</button>');
+    document.getElementById('ok').onclick=closeModal; return;
+  }
+  if(!(pack.allowed||[]).some(r=>CARDS.some(c=>c.rarity===r))){
+    openModal('<h2>Sin cartas</h2><p>Este sobre no tiene cartas configuradas todavía.</p><button class="btn" id="ok">Ok</button>');
+    document.getElementById('ok').onclick=closeModal; return;
+  }
+  inv[pid]=(inv[pid]||0)-1;
+  const cards=[];
+  for(let i=0;i<(pack.size||5);i++){
+    const c=pickCard(pack.allowed||[]); if(!c) continue;
+    const isDup=(owned[c.id]||0)>0;
+    owned[c.id]=(owned[c.id]||0)+1;
+    cards.push({...c,dup:isDup});
+  }
+  await savePlayer();
+  openModal(`
+    <h2>${pack.name}</h2>
+    <p style="font-size:12px;opacity:.85">¡Sobre abierto!</p>
+    <div class="reveal">
+      ${cards.map((c,i)=>`<div class="card ${c.rarity} ${c.dup?'dup':''}" style="animation-delay:${i*120}ms">
+        <span class="tag">${c.dup?'· repe':''}</span>${alfajorSVG(c)}
+        <span class="tag" style="font-size:8px">${c.name}</span></div>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+      <button class="btn" id="again">Abrir otro</button>
+      <button class="btn ghost" id="back">Volver</button>
+    </div>`);
+  document.getElementById('again').onclick=()=>openPack(pid);
+  document.getElementById('back').onclick=showTesoros;
+}
+
+/* ============== TRUEQUES (público + equipo) ============== */
+let tradeScope = 'public'; // 'public' | 'team'
+
+function myDupes(){ return CARDS.filter(c=>(owned[c.id]||0)>1); }
+function myMissing(){ return CARDS.filter(c=>!(owned[c.id]>0)); }
+
+function showTrueques(){
+  const teamId = myPlayer.teamId || null;
+  openModal(`
+    <h2>¡TRUEQUES!</h2>
+    <div style="display:flex;gap:6px;justify-content:center;margin:6px 0 12px">
+      <button class="btn sm ${tradeScope==='public'?'':'ghost'}" id="tpPub">PÚBLICO</button>
+      <button class="btn sm ${tradeScope==='team'?'':'ghost'}" id="tpTeam">EQUIPO ${teamId?'':' (sin equipo)'}</button>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn sm" id="newTrade">+ Nueva oferta</button>
+      <button class="btn sm ghost" id="cls">Cerrar</button>
+    </div>
+    <div id="tradeList" style="text-align:left"></div>`);
+  document.getElementById('tpPub').onclick = ()=>{tradeScope='public';showTrueques()};
+  document.getElementById('tpTeam').onclick= ()=>{ if(!teamId){alert('Unite o creá un equipo primero.');return;} tradeScope='team';showTrueques(); };
+  document.getElementById('cls').onclick=closeModal;
+  document.getElementById('newTrade').onclick=newTradeForm;
+  renderTradeList();
+}
+function renderTradeList(){
+  const box = document.getElementById('tradeList'); if(!box) return;
+  const teamId = myPlayer.teamId;
+  const list = TRADES.filter(t=>{
+    if(t.status!=='open') return false;
+    if(tradeScope==='public') return t.scope==='public';
+    return t.scope==='team' && t.teamId===teamId;
+  });
+  if(!list.length){ box.innerHTML='<p style="opacity:.7;text-align:center">No hay solicitudes activas.</p>'; return; }
+  box.innerHTML = list.map(t=>{
+    const offer = CARDS.find(c=>c.id===t.offer);
+    const want  = CARDS.find(c=>c.id===t.want);
+    const mine  = t.from===CURRENT_USER?.uid;
+    const canAccept = !mine && offer && want && (owned[want.id]||0)>0;
+    return `<div style="display:flex;gap:10px;align-items:center;padding:10px;border:1px solid #c9a24a;border-radius:8px;margin-bottom:8px;background:#1a0f06">
+      <div style="flex:1;font-size:12px">
+        <div style="font-family:'Cinzel';color:#f0d27a">${t.fromName||'?'}</div>
+        <div>Ofrece: <b>${offer?offer.name:'(carta borrada)'}</b></div>
+        <div>Busca: <b>${want?want.name:'(carta borrada)'}</b></div>
+        ${t.scope==='team'?'<div style="font-size:10px;opacity:.6">[equipo]</div>':''}
+      </div>
+      ${mine
+        ? `<button class="btn sm ghost" data-cancel="${t.id}">Cancelar</button>`
+        : `<button class="btn sm" ${canAccept?'':'disabled style="opacity:.4;cursor:not-allowed"'} data-accept="${t.id}">${canAccept?'Aceptar':'No tenés la carta'}</button>`}
+    </div>`;
+  }).join('');
+  box.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>cancelTrade(b.dataset.cancel));
+  box.querySelectorAll('[data-accept]').forEach(b=>b.onclick=()=>acceptTrade(b.dataset.accept));
+}
+function newTradeForm(){
+  const dupes = myDupes(); const miss = myMissing();
+  if(!dupes.length){ alert('No tenés cartas repetidas para ofrecer.'); return; }
+  openModal(`
+    <h2>Nueva oferta · ${tradeScope==='public'?'pública':'equipo'}</h2>
+    <div style="display:grid;gap:10px;text-align:left;margin:14px 0">
+      <label>Ofrezco (tus repetidas)</label>
+      <select id="offSel" style="padding:8px;background:#1a0f06;border:1px solid #c9a24a;color:#f6e6b6;border-radius:6px;font:inherit">
+        ${dupes.map(c=>`<option value="${c.id}">${c.name} (x${owned[c.id]})</option>`).join('')}
+      </select>
+      <label>Busco</label>
+      <select id="wantSel" style="padding:8px;background:#1a0f06;border:1px solid #c9a24a;color:#f6e6b6;border-radius:6px;font:inherit">
+        ${(miss.length?miss:CARDS).map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" id="sendT">Publicar</button>
+      <button class="btn ghost" id="bk">Volver</button>
+    </div>`);
+  document.getElementById('bk').onclick=showTrueques;
+  document.getElementById('sendT').onclick=async ()=>{
+    const offer = document.getElementById('offSel').value;
+    const want  = document.getElementById('wantSel').value;
+    if(!offer||!want||offer===want){ alert('Elegí cartas distintas.');return; }
+    if((owned[offer]||0)<2){ alert('Necesitás al menos 2 copias para ofrecer (conservás una).');return; }
+    if(tradeScope==='team' && !myPlayer.teamId){ alert('Sin equipo.');return; }
+    await addDoc(collection(db,'trades'),{
+      from:CURRENT_USER.uid,
+      fromName: myPlayer.name || CURRENT_USER.email,
+      offer, want,
+      scope: tradeScope,
+      teamId: tradeScope==='team'? myPlayer.teamId : null,
+      status:'open', createdAt: Date.now()
+    });
+    showTrueques();
+  };
+}
+async function cancelTrade(tid){
+  if(!confirm('¿Cancelar oferta?')) return;
+  await updateDoc(doc(db,'trades',tid),{status:'cancelled'});
+  renderTradeList();
+}
+async function acceptTrade(tid){
+  const t = TRADES.find(x=>x.id===tid); if(!t || t.status!=='open') return;
+  // re-check
+  if((owned[t.want]||0)<1){ alert('Ya no tenés esa carta.'); return; }
+  // leer doc de quien ofrece
+  const fromRef = doc(db,'players',t.from);
+  const fromSnap = await getDoc(fromRef);
+  if(!fromSnap.exists()){ alert('Jugador no existe.'); return; }
+  const fromData = fromSnap.data();
+  const fromOwned = fromData.owned||{};
+  if((fromOwned[t.offer]||0)<1){
+    alert('La otra persona ya no tiene la carta. Trueque inválido.');
+    await updateDoc(doc(db,'trades',tid),{status:'cancelled'});
+    renderTradeList(); return;
+  }
+  // swap atómico (best effort)
+  fromOwned[t.offer] = (fromOwned[t.offer]||0) - 1;
+  fromOwned[t.want]  = (fromOwned[t.want] ||0) + 1;
+  owned[t.want] = (owned[t.want]||0) - 1;
+  owned[t.offer]= (owned[t.offer]||0) + 1;
+  await Promise.all([
+    setDoc(fromRef,{owned:fromOwned},{merge:true}),
+    savePlayer(),
+    updateDoc(doc(db,'trades',tid),{status:'accepted',acceptedBy:CURRENT_USER.uid,acceptedAt:Date.now()})
+  ]);
+  openModal(`<h2>¡TRUEQUE HECHO!</h2><p>Recibiste <b>${(CARDS.find(c=>c.id===t.offer)||{}).name||'?'}</b>.</p><button class="btn" onclick="closeModal()">Genial</button>`);
+}
+
+/* ============== EQUIPO (11 jugadores) ============== */
+function genCode(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+
+async function showTeam(){
+  const tid = myPlayer.teamId;
+  let team = null;
+  if(tid){
+    const s = await getDoc(doc(db,'teams',tid));
+    if(s.exists()) team = {id:s.id,...s.data()};
+    else { await setDoc(playerRef,{teamId:null},{merge:true}); }
+  }
+  if(!team){
+    openModal(`
+      <h2>EQUIPO (HASTA 11)</h2>
+      <p style="font-size:12px;opacity:.85">Creá un equipo o unite con un código.</p>
+      <div style="display:grid;gap:10px;text-align:left;margin:14px 0">
+        <label>Nuevo equipo</label>
+        <input id="tName" placeholder="Los Alfa-Locos" style="padding:8px;background:#1a0f06;border:1px solid #c9a24a;color:#f6e6b6;border-radius:6px;font:inherit"/>
+        <button class="btn" id="tCreate">Crear equipo</button>
+        <hr style="border-color:#c9a24a;opacity:.3;margin:10px 0"/>
+        <label>Unirme con código</label>
+        <input id="tCode" placeholder="ABC123" style="padding:8px;background:#1a0f06;border:1px solid #c9a24a;color:#f6e6b6;border-radius:6px;font:inherit;text-transform:uppercase"/>
+        <button class="btn ghost" id="tJoin">Unirme</button>
+      </div>
+      <button class="btn ghost" onclick="closeModal()">Cerrar</button>`);
+    document.getElementById('tCreate').onclick=async()=>{
+      const name = document.getElementById('tName').value.trim() || 'Equipo';
+      const code = genCode();
+      const ref = await addDoc(collection(db,'teams'),{
+        name, code, owner:CURRENT_USER.uid, members:[CURRENT_USER.uid], createdAt:Date.now()
+      });
+      await setDoc(playerRef,{teamId:ref.id},{merge:true});
+      showTeam();
+    };
+    document.getElementById('tJoin').onclick=async()=>{
+      const code = document.getElementById('tCode').value.trim().toUpperCase();
+      if(!code) return;
+      const qs = await import("https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js");
+      const { getDocs } = qs;
+      const snap = await getDocs(query(collection(db,'teams'), where('code','==',code)));
+      if(snap.empty){ alert('Código inválido'); return; }
+      const t = {id:snap.docs[0].id,...snap.docs[0].data()};
+      if((t.members||[]).length>=11){ alert('Equipo lleno (11/11)'); return; }
+      if(!t.members.includes(CURRENT_USER.uid)) t.members.push(CURRENT_USER.uid);
+      await Promise.all([
+        setDoc(doc(db,'teams',t.id),{members:t.members},{merge:true}),
+        setDoc(playerRef,{teamId:t.id},{merge:true})
+      ]);
+      showTeam();
+    };
+    return;
+  }
+  const memberDocs = PLAYERS.filter(p=>team.members.includes(p.id));
+  openModal(`
+    <h2>${team.name}</h2>
+    <div style="font-size:12px;opacity:.85">Código de invitación</div>
+    <div style="font-family:'UnifrakturCook';font-size:34px;color:#f0d27a;letter-spacing:.18em">${team.code}</div>
+    <div style="font-size:11px;opacity:.7;margin-top:4px">${team.members.length} / 11 miembros</div>
+    <div style="margin:14px 0;text-align:left;display:grid;gap:6px">
+      ${memberDocs.map(p=>{
+        const have = CARDS.filter(c=>(p.owned||{})[c.id]>0).length;
+        return `<div style="display:flex;justify-content:space-between;padding:6px 10px;border:1px solid #c9a24a;border-radius:6px;background:#1a0f06;font-size:12px">
+          <span>${p.id===team.owner?'👑 ':''}${p.name||p.email}</span>
+          <span style="opacity:.7">${have}/${CARDS.length}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn ghost" id="leaveT">Salir del equipo</button>
+      <button class="btn" onclick="closeModal()">Cerrar</button>
+    </div>`);
+  document.getElementById('leaveT').onclick=async()=>{
+    if(!confirm('¿Salir del equipo?')) return;
+    const newMembers = team.members.filter(x=>x!==CURRENT_USER.uid);
+    await Promise.all([
+      setDoc(doc(db,'teams',team.id),{members:newMembers},{merge:true}),
+      setDoc(playerRef,{teamId:null},{merge:true})
+    ]);
+    closeModal();
+  };
+}
+
+/* ============== MODAL / TABS ============== */
+function openModal(html){
+  document.getElementById('modal').innerHTML=html;
+  document.getElementById('veil').classList.add('show');
+}
+function closeModal(){ document.getElementById('veil').classList.remove('show') }
+window.closeModal=closeModal;
+document.getElementById('veil').addEventListener('click',e=>{if(e.target.id==='veil')closeModal()});
+document.getElementById('openTesoros').onclick=showTesoros;
+document.getElementById('openTrueques').onclick=showTrueques;
+document.getElementById('openTeam').onclick=showTeam;
+
+document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabbar button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  const t=b.dataset.tab;
+  if(t==='tesoros') showTesoros();
+  else if(t==='trueques') showTrueques();
+  else if(t==='team') showTeam();
+  else if(t==='album'){ setClosed(false); closeModal(); }
+  else if(t==='perfil'){
+    const have=CARDS.filter(c=>(owned[c.id]||0)>0).length;
+    const who=CURRENT_USER?.displayName||CURRENT_USER?.email||'Coleccionista';
+    openModal(`<h2>PERFIL</h2><p>${who}</p>
+      <div style="font-family:'UnifrakturCook';font-size:42px">${have}/${CARDS.length}</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+        <button class="btn ghost" onclick="closeModal()">Cerrar</button>
+        <button class="btn" id="logoutBtn">Cerrar sesión</button>
+      </div>`);
+    document.getElementById('logoutBtn').onclick=async()=>{await signOut(auth);closeModal();};
+  } else if(t==='inicio'){
+    setClosed(true); closeModal();
+  }
+});
+
+renderSections();
+renderAlbum();
+renderCover();
+</script>
+</body>
+</html>
