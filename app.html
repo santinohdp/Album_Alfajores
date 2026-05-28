@@ -366,202 +366,445 @@
 <body>
 
 <!-- ===== MATE REALISTA SVG ===== -->
-<svg class="prop-mate" viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg class="prop-mate" viewBox="0 0 220 300" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="mateBody" cx="35%" cy="30%" r="75%">
-      <stop offset="0%" stop-color="#8b5e3c"/>
-      <stop offset="40%" stop-color="#5c3317"/>
-      <stop offset="100%" stop-color="#2a1308"/>
+    <!-- Gradiente cuerpo calabaza - marrón oscuro rico -->
+    <radialGradient id="mg1" cx="32%" cy="28%" r="72%">
+      <stop offset="0%" stop-color="#a06840"/>
+      <stop offset="30%" stop-color="#7a4a28"/>
+      <stop offset="65%" stop-color="#4a2a10"/>
+      <stop offset="100%" stop-color="#1e0c04"/>
     </radialGradient>
-    <radialGradient id="mateShine" cx="30%" cy="25%" r="50%">
-      <stop offset="0%" stop-color="rgba(255,255,255,.35)"/>
-      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    <!-- Brillo lateral izquierdo -->
+    <radialGradient id="mg2" cx="22%" cy="35%" r="45%">
+      <stop offset="0%" stop-color="rgba(255,210,150,.45)"/>
+      <stop offset="60%" stop-color="rgba(255,180,100,.1)"/>
+      <stop offset="100%" stop-color="rgba(255,180,100,0)"/>
     </radialGradient>
-    <radialGradient id="herbColor" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#8aaa2a"/>
-      <stop offset="60%" stop-color="#5a8010"/>
-      <stop offset="100%" stop-color="#3a5808"/>
-    </radialGradient>
-    <linearGradient id="bombillaGrad" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0%" stop-color="#b0b8c0"/>
-      <stop offset="50%" stop-color="#e8eef4"/>
-      <stop offset="100%" stop-color="#8090a0"/>
+    <!-- Aro metálico plateado -->
+    <linearGradient id="mgMetal" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#606870"/>
+      <stop offset="20%" stop-color="#c8d4dc"/>
+      <stop offset="45%" stop-color="#f0f4f8"/>
+      <stop offset="70%" stop-color="#c0ccd4"/>
+      <stop offset="100%" stop-color="#505860"/>
     </linearGradient>
-    <filter id="mateShadow"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity=".4"/></filter>
+    <!-- Bombilla -->
+    <linearGradient id="mgBomb" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#808890"/>
+      <stop offset="35%" stop-color="#e0e8f0"/>
+      <stop offset="65%" stop-color="#d0d8e0"/>
+      <stop offset="100%" stop-color="#606870"/>
+    </linearGradient>
+    <!-- Yerba -->
+    <radialGradient id="mgYerba" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#9ab830"/>
+      <stop offset="55%" stop-color="#6a8818"/>
+      <stop offset="100%" stop-color="#3a5008"/>
+    </radialGradient>
+    <!-- Sombra proyectada -->
+    <filter id="mgShadow" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="4" dy="8" stdDeviation="10" flood-color="#000" flood-opacity=".55"/>
+    </filter>
+    <!-- Textura superficie -->
+    <filter id="mgNoise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
+      <feBlend in="SourceGraphic" in2="grayNoise" mode="multiply" result="blend"/>
+      <feComposite in="blend" in2="SourceGraphic" operator="in"/>
+    </filter>
   </defs>
 
-  <!-- Sombra base -->
-  <ellipse cx="100" cy="252" rx="62" ry="8" fill="#000" opacity=".3"/>
+  <!-- Sombra suelo -->
+  <ellipse cx="108" cy="292" rx="70" ry="10" fill="#000" opacity=".35"/>
 
-  <!-- Cuerpo del mate - forma de calabaza -->
-  <path d="M46 180 Q36 140 40 100 Q42 60 60 42 Q78 24 100 22 Q122 24 140 42 Q158 60 160 100 Q164 140 154 180 Q148 210 100 218 Q52 210 46 180 Z"
-    fill="url(#mateBody)" filter="url(#mateShadow)"/>
+  <!-- CUERPO PRINCIPAL - forma orgánica de calabaza/porongo -->
+  <g filter="url(#mgShadow)">
+    <path d="M52 195 Q38 158 40 120 Q40 82 55 58 Q70 34 108 28 Q146 34 161 58 Q176 82 176 120 Q176 158 162 195 Q154 225 108 232 Q62 225 52 195 Z"
+      fill="url(#mg1)"/>
+  </g>
 
-  <!-- Costuras/textura de calabaza -->
-  <path d="M100 22 Q85 80 88 180 Q90 210 100 218" stroke="rgba(0,0,0,.25)" stroke-width="1.5" fill="none"/>
-  <path d="M100 22 Q115 80 112 180 Q110 210 100 218" stroke="rgba(0,0,0,.25)" stroke-width="1.5" fill="none"/>
-  <path d="M60 42 Q90 100 88 180" stroke="rgba(0,0,0,.15)" stroke-width="1" fill="none"/>
-  <path d="M140 42 Q110 100 112 180" stroke="rgba(0,0,0,.15)" stroke-width="1" fill="none"/>
+  <!-- Textura superficial sutil -->
+  <path d="M52 195 Q38 158 40 120 Q40 82 55 58 Q70 34 108 28 Q146 34 161 58 Q176 82 176 120 Q176 158 162 195 Q154 225 108 232 Q62 225 52 195 Z"
+    fill="url(#mg2)" opacity=".8"/>
 
-  <!-- Brillo del cuerpo -->
-  <ellipse cx="78" cy="85" rx="28" ry="55" fill="url(#mateShine)" opacity=".7" transform="rotate(-10 78 85)"/>
+  <!-- Venas/costuras de calabaza -->
+  <path d="M108 28 Q95 90 96 195 Q98 218 108 232" stroke="rgba(0,0,0,.22)" stroke-width="2" fill="none"/>
+  <path d="M108 28 Q121 90 120 195 Q118 218 108 232" stroke="rgba(0,0,0,.22)" stroke-width="2" fill="none"/>
+  <path d="M65 45 Q86 110 86 195" stroke="rgba(0,0,0,.14)" stroke-width="1.2" fill="none"/>
+  <path d="M151 45 Q130 110 130 195" stroke="rgba(0,0,0,.14)" stroke-width="1.2" fill="none"/>
+  <!-- Costura horizontal media -->
+  <path d="M42 125 Q108 140 174 125" stroke="rgba(0,0,0,.12)" stroke-width="1" fill="none"/>
 
-  <!-- Detalle metal inferior -->
-  <path d="M54 188 Q100 198 146 188 Q148 200 146 210 Q100 220 54 210 Q52 200 54 188 Z"
-    fill="url(#bombillaGrad)" opacity=".5"/>
+  <!-- Reflejo especular en el cuerpo -->
+  <path d="M62 65 Q72 90 70 145 Q69 170 64 185" stroke="rgba(255,220,160,.35)" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M66 68 Q74 90 72 140" stroke="rgba(255,240,200,.25)" stroke-width="3" fill="none" stroke-linecap="round"/>
 
-  <!-- Abertura superior (boca del mate) -->
-  <ellipse cx="100" cy="36" rx="32" ry="10" fill="#1a0a04"/>
-  <ellipse cx="100" cy="34" rx="30" ry="8" fill="#2a1208"/>
+  <!-- Aro metálico superior (virola) -->
+  <ellipse cx="108" cy="48" rx="44" ry="13" fill="url(#mgMetal)"/>
+  <ellipse cx="108" cy="45" rx="42" ry="10" fill="url(#mgMetal)" opacity=".7"/>
+  <ellipse cx="108" cy="43" rx="40" ry="7" fill="#d0d8e0"/>
+  <!-- Detalles del aro - grabado -->
+  <path d="M68 44 Q108 52 148 44" stroke="rgba(80,90,100,.5)" stroke-width="0.8" fill="none"/>
+  <path d="M70 48 Q108 56 146 48" stroke="rgba(255,255,255,.3)" stroke-width="0.6" fill="none"/>
 
-  <!-- Yerba mate -->
-  <ellipse cx="100" cy="34" rx="28" ry="7" fill="url(#herbColor)"/>
-  <!-- Textura yerba -->
-  <circle cx="88" cy="32" r="2.5" fill="#4a7008" opacity=".7"/>
-  <circle cx="100" cy="31" r="2" fill="#6a9018" opacity=".6"/>
-  <circle cx="112" cy="33" r="2.5" fill="#4a7008" opacity=".7"/>
-  <circle cx="95" cy="35" r="1.8" fill="#3a5808" opacity=".8"/>
-  <circle cx="106" cy="34" r="2" fill="#5a8010" opacity=".6"/>
-  <circle cx="82" cy="35" r="1.5" fill="#4a7008" opacity=".6"/>
-  <circle cx="118" cy="32" r="1.8" fill="#5a8010" opacity=".7"/>
+  <!-- Aro metálico inferior -->
+  <path d="M60 208 Q108 218 156 208 Q158 222 156 230 Q108 242 60 230 Q58 222 60 208 Z"
+    fill="url(#mgMetal)"/>
+  <path d="M62 210 Q108 220 154 210" stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none"/>
 
-  <!-- Bombilla (pajita metálica) -->
-  <rect x="96" y="-8" width="8" height="70" rx="4"
-    fill="url(#bombillaGrad)" transform="rotate(15 100 34)"/>
-  <!-- Colador de bombilla -->
-  <ellipse cx="87" cy="62" rx="7" ry="7" fill="#c8d4dc" transform="rotate(15 87 62)"/>
-  <ellipse cx="87" cy="62" rx="5" ry="5" fill="#a0b0bc" transform="rotate(15 87 62)"/>
-  <circle cx="85" cy="60" r="1" fill="#e0e8ec" transform="rotate(15 87 62)"/>
-  <circle cx="89" cy="62" r="1" fill="#e0e8ec" transform="rotate(15 87 62)"/>
-  <circle cx="87" cy="64" r="1" fill="#e0e8ec" transform="rotate(15 87 62)"/>
+  <!-- BOCA superior - abertura oscura -->
+  <ellipse cx="108" cy="43" rx="36" ry="10" fill="#120804"/>
+  <ellipse cx="108" cy="41" rx="34" ry="8" fill="#1e1008"/>
 
-  <!-- Decoración plateada en la boca -->
-  <ellipse cx="100" cy="36" rx="32" ry="4" fill="url(#bombillaGrad)" opacity=".6"/>
+  <!-- YERBA MATE - relleno verde -->
+  <ellipse cx="108" cy="40" rx="32" ry="8" fill="url(#mgYerba)"/>
+  <!-- Textura de la yerba - palitos y hojitas -->
+  <rect x="90" y="36" width="14" height="2.5" rx="1.2" fill="#3a5808" opacity=".8" transform="rotate(-20 97 37)"/>
+  <rect x="104" y="34" width="12" height="2" rx="1" fill="#4a6810" opacity=".7" transform="rotate(10 110 35)"/>
+  <rect x="116" y="37" width="10" height="2.5" rx="1.2" fill="#3a5808" opacity=".75" transform="rotate(-15 121 38)"/>
+  <rect x="95" y="41" width="8" height="1.8" rx="0.9" fill="#2a4008" opacity=".9" transform="rotate(25 99 42)"/>
+  <circle cx="88" cy="39" r="2.8" fill="#5a7818" opacity=".6"/>
+  <circle cx="102" cy="37" r="2.2" fill="#7a9820" opacity=".55"/>
+  <circle cx="118" cy="38" r="2.5" fill="#5a7818" opacity=".65"/>
+  <circle cx="128" cy="41" r="2" fill="#4a6810" opacity=".6"/>
+  <circle cx="96" cy="43" r="1.8" fill="#3a5808" opacity=".7"/>
+  <circle cx="112" cy="42" r="2.2" fill="#6a8818" opacity=".55"/>
+
+  <!-- BOMBILLA - pajita metálica diagonal -->
+  <!-- Tubo principal -->
+  <rect x="103" y="-15" width="9" height="80" rx="4.5" fill="url(#mgBomb)" transform="rotate(18 110 35)"/>
+  <!-- Brillo del tubo -->
+  <rect x="105" y="-12" width="3" height="74" rx="1.5" fill="rgba(255,255,255,.4)" transform="rotate(18 110 35)"/>
+  <!-- Colador (extremo dentro del mate) -->
+  <ellipse cx="89" cy="68" rx="9" ry="9" fill="url(#mgMetal)"/>
+  <ellipse cx="89" cy="68" rx="7" ry="7" fill="#a0aab2"/>
+  <!-- Agujeritos del colador -->
+  <circle cx="87" cy="66" r="1.2" fill="#606870"/>
+  <circle cx="91" cy="66" r="1.2" fill="#606870"/>
+  <circle cx="89" cy="70" r="1.2" fill="#606870"/>
+  <circle cx="86" cy="70" r="1" fill="#606870"/>
+  <circle cx="92" cy="70" r="1" fill="#606870"/>
+  <circle cx="89" cy="63" r="1" fill="#606870"/>
+  <!-- Boquilla superior (extremo que sale) -->
+  <ellipse cx="122" cy="12" rx="6" ry="5" fill="url(#mgMetal)" transform="rotate(18 122 12)"/>
+  <ellipse cx="122" cy="12" rx="4" ry="3.5" fill="#d0d8e0" transform="rotate(18 122 12)"/>
+
+  <!-- Reflejo final en cuerpo -->
+  <path d="M145 65 Q155 100 153 155 Q152 175 148 190" stroke="rgba(255,255,255,.08)" stroke-width="12" fill="none" stroke-linecap="round"/>
 </svg>
 
 <!-- ===== SOBRES DECORATIVOS ===== -->
-<svg class="prop-sobres" viewBox="0 0 160 210">
+<svg class="prop-sobres" viewBox="0 0 170 240" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="sobreGrad" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0" stop-color="#f4e4b4"/>
-      <stop offset="1" stop-color="#c8a45c"/>
+    <linearGradient id="sg1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f8eecc"/>
+      <stop offset="50%" stop-color="#e8d49a"/>
+      <stop offset="100%" stop-color="#c8a050"/>
     </linearGradient>
-    <linearGradient id="sobreBand" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0" stop-color="#2a5aaa"/>
-      <stop offset="1" stop-color="#1a3a78"/>
+    <linearGradient id="sg2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#2860b8"/>
+      <stop offset="100%" stop-color="#142e70"/>
     </linearGradient>
+    <radialGradient id="sgSeal" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#f8d840"/>
+      <stop offset="55%" stop-color="#d4a020"/>
+      <stop offset="100%" stop-color="#8a5808"/>
+    </radialGradient>
+    <filter id="sgShadow">
+      <feDropShadow dx="3" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".5"/>
+    </filter>
+    <filter id="sgShadow2">
+      <feDropShadow dx="-2" dy="4" stdDeviation="6" flood-color="#000" flood-opacity=".35"/>
+    </filter>
   </defs>
-  <!-- Sobre de atrás -->
-  <rect x="12" y="14" width="130" height="180" rx="5" fill="#e0cc90" stroke="#8a6824" stroke-width="2" transform="rotate(-8 77 104)"/>
+
+  <!-- Sobre de atrás (inclinado) -->
+  <g transform="rotate(-12 85 120)" filter="url(#sgShadow2)">
+    <rect x="8" y="15" width="140" height="195" rx="6" fill="#e0cc88" stroke="#8a6420" stroke-width="2"/>
+    <path d="M8 15 L78 78 L148 15 Z" fill="#cabb70" stroke="#8a6420" stroke-width="1.5"/>
+  </g>
+
   <!-- Sobre principal -->
-  <rect x="8" y="8" width="130" height="180" rx="5" fill="url(#sobreGrad)" stroke="#8a6824" stroke-width="2.5"/>
-  <!-- Doblez superior -->
-  <path d="M8 8 L73 70 L138 8 Z" fill="#dcc880" stroke="#8a6824" stroke-width="1"/>
-  <!-- Banda azul -->
-  <rect x="18" y="80" width="110" height="40" rx="4" fill="url(#sobreBand)" stroke="#c9a24a" stroke-width="2"/>
-  <text x="73" y="106" text-anchor="middle" font-family="UnifrakturCook,serif" font-size="17" fill="#fff">ALFA-ÁLBUM</text>
-  <!-- Sticker medallón -->
-  <circle cx="73" cy="155" r="20" fill="#f0c840" stroke="#9a6820" stroke-width="2.5"/>
-  <circle cx="73" cy="155" r="14" fill="#d4a030" stroke="#8a5820" stroke-width="1.5"/>
-  <text x="73" y="160" text-anchor="middle" font-family="Cinzel,serif" font-size="9" font-weight="800" fill="#5a3010">AFA</text>
+  <g filter="url(#sgShadow)">
+    <rect x="8" y="10" width="142" height="200" rx="6" fill="url(#sg1)" stroke="#9a7028" stroke-width="3"/>
+
+    <!-- Doblez superior (flap abierto) -->
+    <path d="M8 10 L79 80 L150 10 Z" fill="#dcc878" stroke="#9a7028" stroke-width="1.5"/>
+    <!-- Sombra interna del doblez -->
+    <path d="M8 10 L79 80 L150 10 Q130 20 79 55 Q28 20 8 10 Z" fill="rgba(0,0,0,.08)"/>
+    <!-- Línea del doblez -->
+    <path d="M8 10 L79 80 L150 10" stroke="rgba(0,0,0,.2)" stroke-width="1" fill="none"/>
+
+    <!-- Banda principal azul -->
+    <rect x="16" y="100" width="126" height="50" rx="5" fill="url(#sg2)" stroke="#c9a024" stroke-width="2.5"/>
+    <!-- Brillo en la banda -->
+    <rect x="16" y="100" width="126" height="15" rx="5" fill="rgba(255,255,255,.12)"/>
+    <text x="79" y="122" text-anchor="middle" font-family="Cinzel,serif" font-size="9" font-weight="800" fill="rgba(255,255,255,.6)" letter-spacing="2">SOBRE DE</text>
+    <text x="79" y="138" text-anchor="middle" font-family="UnifrakturCook,serif" font-size="20" fill="#fff">ALFA-ÁLBUM</text>
+
+    <!-- Sello/medallón dorado -->
+    <circle cx="79" cy="185" r="26" fill="url(#sgSeal)" stroke="#9a6010" stroke-width="2.5"/>
+    <circle cx="79" cy="185" r="20" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <circle cx="79" cy="185" r="14" fill="rgba(0,0,0,.15)"/>
+    <text x="79" y="182" text-anchor="middle" font-family="Cinzel,serif" font-size="9" font-weight="800" fill="#2a1008">AFA</text>
+    <text x="79" y="194" text-anchor="middle" font-family="Cinzel,serif" font-size="6" fill="#2a1008">OFICIAL</text>
+
+    <!-- Líneas de texto simuladas -->
+    <rect x="22" y="170" width="40" height="2" rx="1" fill="rgba(100,70,20,.25)"/>
+    <rect x="96" y="170" width="36" height="2" rx="1" fill="rgba(100,70,20,.25)"/>
+
+    <!-- Esquinas decorativas -->
+    <path d="M18 18 L18 30 M18 18 L30 18" stroke="#9a7028" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M140 18 L140 30 M140 18 L128 18" stroke="#9a7028" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
 </svg>
 
 <!-- ===== BOTELLA COCA-COLA ===== -->
-<svg class="prop-botella" viewBox="0 0 120 320">
+<svg class="prop-botella" viewBox="0 0 130 360" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bottleGrad" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0" stop-color="#8b0a1a"/>
-      <stop offset="35%" stop-color="#d01020"/>
-      <stop offset="65%" stop-color="#f03040"/>
-      <stop offset="100%" stop-color="#8b0a1a"/>
+    <!-- Gradiente cuerpo rojo -->
+    <linearGradient id="bg1" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#6a0810"/>
+      <stop offset="20%" stop-color="#b01020"/>
+      <stop offset="42%" stop-color="#e82030"/>
+      <stop offset="58%" stop-color="#f84050"/>
+      <stop offset="78%" stop-color="#c01828"/>
+      <stop offset="100%" stop-color="#6a0810"/>
     </linearGradient>
-    <linearGradient id="bottleShine" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0" stop-color="rgba(255,255,255,0)"/>
-      <stop offset="30%" stop-color="rgba(255,255,255,.45)"/>
-      <stop offset="60%" stop-color="rgba(255,255,255,.1)"/>
+    <!-- Brillo vertical -->
+    <linearGradient id="bg2" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="25%" stop-color="rgba(255,255,255,.5)"/>
+      <stop offset="50%" stop-color="rgba(255,255,255,.15)"/>
       <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
     </linearGradient>
+    <!-- Tapa metálica -->
+    <linearGradient id="bg3" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#606870"/>
+      <stop offset="30%" stop-color="#d0d8e0"/>
+      <stop offset="60%" stop-color="#e8eef4"/>
+      <stop offset="100%" stop-color="#505860"/>
+    </linearGradient>
+    <!-- Etiqueta blanca -->
+    <linearGradient id="bgLabel" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f0f0f0"/>
+    </linearGradient>
+    <filter id="bgShadow">
+      <feDropShadow dx="-5" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".6"/>
+    </filter>
   </defs>
-  <!-- Sombra -->
-  <ellipse cx="60" cy="314" rx="30" ry="6" fill="#000" opacity=".3"/>
-  <!-- Cuerpo botella -->
-  <path d="M30 280 Q22 240 24 200 Q26 170 22 150 Q18 130 28 110 Q34 90 34 70 Q36 52 30 40 Q28 30 38 24 L82 24 Q92 30 90 40 Q84 52 86 70 Q86 90 92 110 Q102 130 98 150 Q94 170 96 200 Q98 240 90 280 Q80 300 60 304 Q40 300 30 280 Z"
-    fill="url(#bottleGrad)"/>
-  <!-- Brillo -->
-  <path d="M38 260 Q34 220 36 180 Q37 150 34 130 Q30 110 38 90 Q43 72 43 55 Q44 40 38 30 L48 26 Q50 38 50 55 Q50 72 44 90 Q38 110 42 130 Q46 150 44 180 Q42 220 44 260 Z"
-    fill="url(#bottleShine)" opacity=".8"/>
-  <!-- Cuello -->
-  <rect x="44" y="6" width="32" height="22" rx="4" fill="#c01828"/>
-  <rect x="40" y="4" width="40" height="6" rx="3" fill="#888"/>
-  <rect x="42" y="2" width="36" height="5" rx="2.5" fill="#aaa"/>
-  <!-- Etiqueta Coca-Cola -->
-  <rect x="26" y="120" width="68" height="80" rx="4" fill="#fff" opacity=".95"/>
-  <rect x="26" y="120" width="68" height="20" rx="4" fill="#c01828"/>
-  <text x="60" y="136" text-anchor="middle" font-family="Georgia,serif" font-size="10" font-weight="bold" fill="#fff" font-style="italic">Coca-Cola</text>
-  <text x="60" y="158" text-anchor="middle" font-family="Cinzel,serif" font-size="7" fill="#c01828" font-weight="800">EDICIÓN</text>
-  <text x="60" y="168" text-anchor="middle" font-family="Cinzel,serif" font-size="7" fill="#c01828" font-weight="800">ALFA-ÁLBUM</text>
-  <rect x="26" y="192" width="68" height="8" rx="0" fill="#c01828"/>
+
+  <!-- Sombra suelo -->
+  <ellipse cx="65" cy="354" rx="36" ry="7" fill="#000" opacity=".35"/>
+
+  <!-- CUERPO DE LA BOTELLA -->
+  <g filter="url(#bgShadow)">
+    <!-- Forma contorno de botella Coca-Cola clásica -->
+    <path d="
+      M46 28 L84 28
+      Q92 32 90 44 Q86 58 88 72 Q90 86 96 100
+      Q108 130 104 160 Q100 190 102 220
+      Q104 260 100 295 Q96 318 90 328
+      Q80 342 65 344 Q50 342 40 328
+      Q34 318 30 295 Q26 260 28 220
+      Q30 190 26 160 Q22 130 34 100
+      Q40 86 42 72 Q44 58 40 44
+      Q38 32 46 28 Z"
+      fill="url(#bg1)"/>
+
+    <!-- Brillo izquierdo -->
+    <path d="
+      M46 28 L50 28
+      Q55 32 53 44 Q50 58 51 72 Q52 86 56 100
+      Q62 130 59 160 Q56 190 57 220
+      Q58 260 55 295 Q53 318 49 328 L46 322
+      Q42 308 40 295 Q36 260 38 220
+      Q40 190 36 160 Q22 130 34 100
+      Q40 86 42 72 Q44 58 40 44
+      Q38 32 46 28 Z"
+      fill="url(#bg2)" opacity=".7"/>
+
+    <!-- Reflejo derecho oscuro -->
+    <path d="M88 72 Q92 100 90 160 Q88 200 90 260 Q92 300 88 328 Q82 338 76 342 L80 344 Q90 336 96 322 Q102 308 102 295 Q104 260 102 220 Q100 190 104 160 Q108 130 96 100 Q90 86 88 72 Z"
+      fill="rgba(0,0,0,.15)"/>
+  </g>
+
+  <!-- Nervio central Coca-Cola (línea vertical) -->
+  <path d="M63 120 L63 310" stroke="rgba(255,255,255,.08)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M67 120 L67 310" stroke="rgba(255,255,255,.06)" stroke-width="2"/>
+
+  <!-- CUELLO Y TAPA -->
+  <!-- Cuello gradiente oscuro -->
+  <path d="M46 28 Q46 14 52 8 L78 8 Q84 14 84 28 Z" fill="#900c18"/>
+  <!-- Rosca / tapón -->
+  <rect x="50" y="4" width="30" height="8" rx="4" fill="url(#bg3)"/>
+  <rect x="48" y="8" width="34" height="4" rx="2" fill="#c8d0d8"/>
+  <rect x="52" y="2" width="26" height="5" rx="2.5" fill="#e0e8f0"/>
+  <!-- Detalle rosca -->
+  <path d="M50 6 Q65 4 80 6" stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none"/>
+
+  <!-- ETIQUETA PRINCIPAL -->
+  <rect x="26" y="128" width="78" height="108" rx="4" fill="url(#bgLabel)"/>
+  <!-- Franja roja superior etiqueta -->
+  <rect x="26" y="128" width="78" height="26" rx="4" fill="#c81020"/>
+  <rect x="26" y="148" width="78" height="6" fill="#c81020"/>
+  <!-- Logo Coca-Cola cursiva -->
+  <text x="65" y="147" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="bold" font-style="italic" fill="#fff" letter-spacing="-0.5">Coca-Cola</text>
+  <!-- Ola blanca debajo del logo -->
+  <path d="M30 154 Q45 150 65 154 Q85 158 100 154" stroke="rgba(255,255,255,.5)" stroke-width="1.5" fill="none"/>
+  <!-- Cuerpo etiqueta blanco -->
+  <text x="65" y="175" text-anchor="middle" font-family="Cinzel,serif" font-size="7.5" font-weight="800" fill="#c81020" letter-spacing="1.5">EDICIÓN</text>
+  <text x="65" y="187" text-anchor="middle" font-family="Cinzel,serif" font-size="7.5" font-weight="800" fill="#c81020" letter-spacing="1">ALFA-ÁLBUM</text>
+  <!-- Decoración dentro etiqueta -->
+  <path d="M34 195 L96 195" stroke="#c81020" stroke-width="0.8" opacity=".4"/>
+  <text x="65" y="208" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#444" font-style="italic">Argentina · 350ml</text>
+  <path d="M34 215 L96 215" stroke="#c81020" stroke-width="0.8" opacity=".4"/>
+  <text x="65" y="226" text-anchor="middle" font-family="Cinzel,serif" font-size="6" fill="#888" letter-spacing="1">EDICIÓN ESPECIAL</text>
+  <!-- Franja roja inferior etiqueta -->
+  <rect x="26" y="230" width="78" height="6" rx="0" fill="#c81020"/>
+
+  <!-- Contorno etiqueta -->
+  <rect x="26" y="128" width="78" height="108" rx="4" fill="none" stroke="rgba(200,16,32,.3)" stroke-width="1"/>
+
+  <!-- Líneas horizontales decorativas en cuerpo (ondas) -->
+  <path d="M28 112 Q65 108 102 112" stroke="rgba(255,255,255,.15)" stroke-width="1.5" fill="none"/>
+  <path d="M30 116 Q65 112 100 116" stroke="rgba(255,255,255,.1)" stroke-width="1" fill="none"/>
+  <path d="M29 248 Q65 244 101 248" stroke="rgba(255,255,255,.12)" stroke-width="1.5" fill="none"/>
+  <path d="M30 252 Q65 248 100 252" stroke="rgba(255,255,255,.08)" stroke-width="1" fill="none"/>
 </svg>
 
 <!-- ===== ALFAJOR DECORATIVO GRANDE ===== -->
-<svg class="prop-alfajor" viewBox="0 0 200 110">
+<svg class="prop-alfajor" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="alfTop" cx="38%" cy="28%" r="65%">
-      <stop offset="0%" stop-color="#4a2a10"/>
-      <stop offset="60%" stop-color="#2e1608"/>
-      <stop offset="100%" stop-color="#1a0a04"/>
+    <!-- Tapa superior chocolate oscuro -->
+    <radialGradient id="at1" cx="33%" cy="28%" r="68%">
+      <stop offset="0%" stop-color="#5a3018"/>
+      <stop offset="45%" stop-color="#2e1608"/>
+      <stop offset="100%" stop-color="#130804"/>
     </radialGradient>
-    <linearGradient id="alfCream" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="0%" stop-color="#f8eecc"/>
-      <stop offset="100%" stop-color="#d4aa60"/>
+    <!-- Brillo tapa -->
+    <radialGradient id="at2" cx="28%" cy="22%" r="48%">
+      <stop offset="0%" stop-color="rgba(255,200,140,.5)"/>
+      <stop offset="60%" stop-color="rgba(255,160,80,.1)"/>
+      <stop offset="100%" stop-color="rgba(255,160,80,0)"/>
+    </radialGradient>
+    <!-- DDL / Relleno -->
+    <linearGradient id="at3" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8eec8"/>
+      <stop offset="40%" stop-color="#e8c878"/>
+      <stop offset="100%" stop-color="#c09840"/>
     </linearGradient>
-    <radialGradient id="alfShine" cx="35%" cy="25%" r="45%">
-      <stop offset="0%" stop-color="rgba(255,255,255,.4)"/>
-      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-    </radialGradient>
+    <!-- Borde inferior -->
+    <linearGradient id="at4" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e1008"/>
+      <stop offset="100%" stop-color="#0e0804"/>
+    </linearGradient>
+    <filter id="atShadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity=".55"/>
+    </filter>
   </defs>
-  <!-- Sombra -->
-  <ellipse cx="100" cy="105" rx="80" ry="5" fill="#000" opacity=".3"/>
-  <!-- Tapa inferior -->
-  <ellipse cx="100" cy="75" rx="82" ry="16" fill="#1a0a04"/>
-  <rect x="18" y="60" width="164" height="16" fill="#1a0a04"/>
-  <!-- Relleno DDL -->
-  <rect x="18" y="54" width="164" height="10" fill="url(#alfCream)"/>
-  <ellipse cx="100" cy="54" rx="82" ry="7" fill="#f8eecc"/>
-  <ellipse cx="100" cy="63" rx="82" ry="5" fill="#d4aa60" opacity=".6"/>
-  <!-- Chorrito de baño -->
-  <path d="M18 38 Q28 52 38 40 Q48 54 58 42 Q68 56 78 44 Q88 58 98 46 Q108 58 118 44 Q128 56 138 42 Q148 54 158 40 Q168 52 182 38 L182 54 L18 54 Z" fill="#1e0e04"/>
-  <!-- Tapa superior -->
-  <ellipse cx="100" cy="38" rx="82" ry="18" fill="url(#alfTop)"/>
-  <!-- Brillo tapa -->
-  <ellipse cx="78" cy="28" rx="50" ry="8" fill="url(#alfShine)" opacity=".8" transform="rotate(-5 78 28)"/>
-  <!-- Coco rallado decorativo -->
-  <rect x="36" y="32" width="8" height="1.5" rx="1" fill="rgba(255,255,255,.4)" transform="rotate(-15 40 33)"/>
-  <rect x="70" y="28" width="10" height="1.5" rx="1" fill="rgba(255,255,255,.35)" transform="rotate(8 75 29)"/>
-  <rect x="108" y="31" width="9" height="1.5" rx="1" fill="rgba(255,255,255,.4)" transform="rotate(-10 112 32)"/>
-  <rect x="148" y="29" width="7" height="1.5" rx="1" fill="rgba(255,255,255,.35)" transform="rotate(12 152 30)"/>
-  <!-- Texto en alfajor -->
-  <text x="100" y="42" text-anchor="middle" font-family="Cinzel,serif" font-size="9" fill="rgba(255,255,255,.5)" letter-spacing="3">JORGITO</text>
+
+  <!-- Sombra suelo -->
+  <ellipse cx="110" cy="126" rx="90" ry="7" fill="#000" opacity=".3"/>
+
+  <g filter="url(#atShadow)">
+    <!-- TAPA INFERIOR (galletita) -->
+    <ellipse cx="110" cy="94" rx="90" ry="22" fill="url(#at4)"/>
+    <rect x="20" y="74" width="180" height="22" fill="url(#at4)"/>
+    <!-- Textura galletita inferior - puntitos -->
+    <g fill="rgba(255,255,255,.06)">
+      <circle cx="50" cy="82" r="1.8"/><circle cx="80" cy="78" r="1.8"/><circle cx="110" cy="82" r="1.8"/>
+      <circle cx="140" cy="78" r="1.8"/><circle cx="170" cy="82" r="1.8"/>
+      <circle cx="65" cy="90" r="1.5"/><circle cx="95" cy="86" r="1.5"/><circle cx="125" cy="90" r="1.5"/>
+      <circle cx="155" cy="86" r="1.5"/>
+    </g>
+
+    <!-- RELLENO DDL -->
+    <rect x="20" y="66" width="180" height="12" fill="url(#at3)"/>
+    <ellipse cx="110" cy="66" rx="90" ry="8" fill="#f8eec8"/>
+    <ellipse cx="110" cy="78" rx="90" ry="8" fill="#c89840" opacity=".5"/>
+    <!-- Efecto derrame DDL en los bordes -->
+    <ellipse cx="110" cy="72" rx="92" ry="9" fill="none" stroke="#e8c060" stroke-width="2" opacity=".4"/>
+
+    <!-- CHORRITO / drips de chocolate en el borde -->
+    <path d="M20 54
+      Q28 66 34 58 Q40 68 46 58 Q52 66 58 56
+      Q64 66 70 56 Q76 66 82 56 Q88 66 94 56
+      Q100 66 106 56 Q112 66 118 56 Q124 66 130 56
+      Q136 66 142 56 Q148 66 154 56 Q160 66 166 56
+      Q172 66 178 56 Q184 66 200 56
+      L200 66 L20 66 Z"
+      fill="rgba(30,16,8,.9)"/>
+
+    <!-- TAPA SUPERIOR (galletita bañada) -->
+    <ellipse cx="110" cy="54" rx="90" ry="22" fill="url(#at1)"/>
+
+    <!-- Brillo especular tapa -->
+    <ellipse cx="80" cy="40" rx="52" ry="10" fill="url(#at2)" transform="rotate(-6 80 40)" opacity=".9"/>
+
+    <!-- Textura superficial - granillo/coco -->
+    <g fill="rgba(255,255,255,.3)" transform="rotate(-8 110 54)">
+      <rect x="42" y="46" width="11" height="2.5" rx="1.2"/>
+      <rect x="70" y="42" width="14" height="2" rx="1"/>
+      <rect x="98" y="47" width="10" height="2.5" rx="1.2"/>
+      <rect x="126" y="41" width="12" height="2" rx="1"/>
+      <rect x="155" y="46" width="10" height="2.5" rx="1.2"/>
+    </g>
+    <g fill="rgba(255,255,255,.15)">
+      <rect x="56" y="56" width="9" height="2" rx="1" transform="rotate(15 60 57)"/>
+      <rect x="84" y="53" width="12" height="1.8" rx="0.9" transform="rotate(-10 90 54)"/>
+      <rect x="140" y="55" width="10" height="2" rx="1" transform="rotate(12 145 56)"/>
+    </g>
+
+    <!-- Texto de marca en la tapa -->
+    <text x="110" y="58" text-anchor="middle" font-family="Cinzel,serif" font-size="12" font-weight="800" fill="rgba(255,255,255,.45)" letter-spacing="5">JORGITO</text>
+
+    <!-- Borde lateral del alfajor (perspectiva) -->
+    <path d="M20 54 L20 74" stroke="#0e0804" stroke-width="1.5" fill="none"/>
+    <path d="M200 54 L200 74" stroke="#0e0804" stroke-width="1.5" fill="none"/>
+
+    <!-- Reflejo derecho oscuro en tapa -->
+    <path d="M175 38 Q185 50 185 70" stroke="rgba(0,0,0,.2)" stroke-width="8" fill="none" stroke-linecap="round"/>
+  </g>
 </svg>
 
 <!-- Sobres flotantes portada -->
-<svg class="floatPack" id="fp1" style="left:5%;top:28%;transform:rotate(-11deg)" viewBox="0 0 120 165">
-  <rect x="5" y="5" width="110" height="155" rx="6" fill="#f4e4b4" stroke="#8a6824" stroke-width="3"/>
-  <path d="M5 5 L60 65 L115 5 Z" fill="#e0cc84" stroke="#8a6824" stroke-width="1.5"/>
-  <text x="60" y="36" text-anchor="middle" font-family="Cinzel,serif" font-size="8" fill="#5a3814" font-weight="800">SOBRE DE</text>
-  <text x="60" y="48" text-anchor="middle" font-family="Cinzel,serif" font-size="8" fill="#5a3814" font-weight="800">FIGURITAS</text>
-  <rect x="14" y="72" width="92" height="36" rx="4" fill="#2050a0" stroke="#c9a24a" stroke-width="2"/>
-  <text x="60" y="96" text-anchor="middle" font-family="UnifrakturCook,serif" font-size="18" fill="#fff">ALFA-ÁLBUM</text>
-  <circle cx="60" cy="138" r="16" fill="#f0c840" stroke="#9a6820" stroke-width="2.5"/>
-  <text x="60" y="143" text-anchor="middle" font-family="Cinzel,serif" font-size="8" font-weight="800" fill="#5a3010">AFA</text>
+<svg class="floatPack" id="fp1" style="left:5%;top:28%;transform:rotate(-11deg)" viewBox="0 0 130 175">
+  <defs>
+    <linearGradient id="fp1g" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f8eecc"/><stop offset="100%" stop-color="#c8a050"/>
+    </linearGradient>
+  </defs>
+  <rect x="5" y="5" width="120" height="165" rx="7" fill="url(#fp1g)" stroke="#9a7028" stroke-width="3"/>
+  <path d="M5 5 L65 68 L125 5 Z" fill="#dcc870" stroke="#9a7028" stroke-width="1.5"/>
+  <path d="M5 5 L65 68 L125 5" stroke="rgba(0,0,0,.18)" stroke-width="1" fill="none"/>
+  <rect x="15" y="78" width="100" height="46" rx="5" fill="#1a3a88" stroke="#c9a024" stroke-width="2"/>
+  <rect x="15" y="78" width="100" height="16" rx="5" fill="rgba(255,255,255,.1)"/>
+  <text x="65" y="94" text-anchor="middle" font-family="Cinzel,serif" font-size="7.5" fill="rgba(255,255,255,.7)" font-weight="800" letter-spacing="2">SOBRE DE</text>
+  <text x="65" y="112" text-anchor="middle" font-family="UnifrakturCook,serif" font-size="20" fill="#fff">ALFA-ÁLBUM</text>
+  <circle cx="65" cy="148" r="18" fill="#f0c830" stroke="#9a6010" stroke-width="2.5"/>
+  <circle cx="65" cy="148" r="13" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1" stroke-dasharray="2 2"/>
+  <text x="65" y="145" text-anchor="middle" font-family="Cinzel,serif" font-size="8" font-weight="800" fill="#3a1808">AFA</text>
+  <text x="65" y="156" text-anchor="middle" font-family="Cinzel,serif" font-size="5.5" fill="#3a1808">OFICIAL</text>
 </svg>
-<svg class="floatPack" id="fp2" style="right:5%;bottom:16%;transform:rotate(9deg)" viewBox="0 0 120 165">
-  <rect x="5" y="5" width="110" height="155" rx="6" fill="#e8d4a0" stroke="#8a6824" stroke-width="3"/>
-  <rect x="14" y="44" width="92" height="36" rx="4" fill="#c01020" stroke="#c9a24a" stroke-width="2"/>
-  <text x="60" y="68" text-anchor="middle" font-family="Cinzel,serif" font-size="11" fill="#fff" font-weight="800">COCA-COLA</text>
-  <circle cx="60" cy="118" r="24" fill="#2a1808"/>
-  <circle cx="60" cy="118" r="16" fill="#c9a24a" opacity=".6"/>
-  <text x="60" y="123" text-anchor="middle" font-family="UnifrakturCook,serif" font-size="13" fill="#f0e0a0">EDICIÓN</text>
+<svg class="floatPack" id="fp2" style="right:5%;bottom:16%;transform:rotate(9deg)" viewBox="0 0 130 175">
+  <defs>
+    <linearGradient id="fp2g" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f0e2b0"/><stop offset="100%" stop-color="#c09848"/>
+    </linearGradient>
+  </defs>
+  <rect x="5" y="5" width="120" height="165" rx="7" fill="url(#fp2g)" stroke="#9a7028" stroke-width="3"/>
+  <path d="M5 5 L65 68 L125 5 Z" fill="#d8cc78" stroke="#9a7028" stroke-width="1.5"/>
+  <rect x="15" y="78" width="100" height="46" rx="5" fill="#b80e1e" stroke="#c9a024" stroke-width="2"/>
+  <rect x="15" y="78" width="100" height="16" rx="5" fill="rgba(255,255,255,.1)"/>
+  <text x="65" y="96" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="bold" font-style="italic" fill="#fff">Coca-Cola</text>
+  <text x="65" y="112" text-anchor="middle" font-family="Cinzel,serif" font-size="8" fill="rgba(255,255,255,.85)" font-weight="800" letter-spacing="1">EDICIÓN ESPECIAL</text>
+  <circle cx="65" cy="148" r="18" fill="#2a1808" stroke="#c9a024" stroke-width="2.5"/>
+  <circle cx="65" cy="148" r="13" fill="#c9a024" opacity=".35"/>
+  <text x="65" y="145" text-anchor="middle" font-family="UnifrakturCook,serif" font-size="13" fill="#f0d880">AFA</text>
+  <text x="65" y="158" text-anchor="middle" font-family="Cinzel,serif" font-size="5.5" fill="#c9a024">ÁLBUM</text>
 </svg>
 
 <div class="title">¡ALFA-ÁLBUM ARGENTINO! · EDICIÓN DE LEYENDAS</div>
