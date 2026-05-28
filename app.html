@@ -769,7 +769,19 @@ onAuthStateChanged(auth, async (user)=>{
       return;
     }
     myPlayer = data;
-    owned = myPlayer.owned || {};
+    const incomingOwned = myPlayer.owned || {};
+    // If there are pending (not yet pasted) cards, remove them from the snapshot
+    // so slots stay empty until user taps +
+    if(window._pendingPegar && window._pendingPegar.pendingOwned){
+      const po = window._pendingPegar.pendingOwned;
+      for(const cid in po){
+        if(incomingOwned[cid]){
+          incomingOwned[cid] = Math.max(0, (incomingOwned[cid]||0) - (po[cid]||0));
+          if(incomingOwned[cid]<=0) delete incomingOwned[cid];
+        }
+      }
+    }
+    owned = incomingOwned;
     inv   = myPlayer.inv   || {};
     renderAlbum(); renderCover();
   });
