@@ -334,48 +334,83 @@
   .empty-msg{text-align:center;color:#f0d890;font-family:'Cinzel',serif;letter-spacing:.1em;margin:18px 0;opacity:.75}
 
   /* ===== CARD DETAIL MODAL ===== */
+  /* ===== CARD DETAIL FULLSCREEN ===== */
   .card-detail-veil{
-    position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
-    background:rgba(0,0,0,.82);backdrop-filter:blur(8px);
+    position:fixed;inset:0;z-index:60;
+    display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0);
+    transition:background .35s ease;
   }
-  .card-detail-veil.show{display:flex}
-  .card-detail{
-    position:relative;width:min(400px,88vw);
+  .card-detail-veil.show{display:flex;background:rgba(0,0,0,.88)}
+
+  /* The card itself flies in from the slot */
+  @keyframes cardFlyIn{
+    0%  {transform:scale(.12) translateY(60vh);opacity:0;filter:brightness(2)}
+    35% {opacity:1;filter:brightness(1.4)}
+    65% {transform:scale(1.04) translateY(-6px)}
+    82% {transform:scale(.97) translateY(2px)}
+    100%{transform:scale(1) translateY(0);filter:brightness(1)}
+  }
+  @keyframes cardFlyOut{
+    0%  {transform:scale(1);opacity:1}
+    100%{transform:scale(.1) translateY(60vh);opacity:0}
+  }
+  .cd-wrap{
+    position:relative;
+    width:min(420px,92vw);max-height:92vh;
+    display:flex;flex-direction:column;
     background:linear-gradient(170deg,#2e1a08,#160904);
-    border:2px solid #c9a24a;border-radius:16px;
-    box-shadow:0 40px 80px rgba(0,0,0,.8),inset 0 0 30px rgba(201,162,74,.12);
+    border:2px solid #c9a24a;border-radius:18px;
+    box-shadow:0 50px 100px rgba(0,0,0,.9),inset 0 0 40px rgba(201,162,74,.12);
     overflow:hidden;font-family:'Cinzel',serif;color:#f0d890;
-    animation:cardPop .3s cubic-bezier(.34,1.56,.64,1);
+    animation:cardFlyIn .55s cubic-bezier(.22,1,.36,1) forwards;
   }
-  @keyframes cardPop{from{transform:scale(.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
-  .card-detail-img{
-    width:100%;height:300px;object-fit:contain;display:block;background:#100704;
-    border-bottom:2px solid #c9a24a;
+  .cd-wrap.closing{animation:cardFlyOut .3s ease forwards}
+
+  /* Rarity border glow */
+  .cd-wrap.rarity-gold  {border-color:#f0d040;box-shadow:0 0 60px rgba(240,200,60,.5),0 50px 100px rgba(0,0,0,.9)}
+  .cd-wrap.rarity-silver{border-color:#c0d0e0;box-shadow:0 0 40px rgba(192,210,230,.4),0 50px 100px rgba(0,0,0,.9)}
+  .cd-wrap.rarity-coke  {border-color:#e03050;box-shadow:0 0 40px rgba(220,40,60,.35),0 50px 100px rgba(0,0,0,.9)}
+
+  .cd-img{width:100%;max-height:52vh;object-fit:contain;display:block;background:#0e0704}
+  .cd-placeholder{width:100%;height:240px;display:flex;align-items:center;justify-content:center;background:#0e0704}
+  .cd-body{padding:16px 20px 20px;overflow-y:auto;flex:1}
+  .cd-rarity{
+    display:inline-block;font-size:8px;letter-spacing:.2em;padding:3px 12px;
+    border-radius:99px;margin-bottom:8px;font-weight:700;text-transform:uppercase;
   }
-  .card-detail-img-placeholder{
-    width:100%;height:300px;display:flex;align-items:center;justify-content:center;background:#100704;
-    border-bottom:2px solid #c9a24a;
+  .rarity-classic .cd-rarity{background:rgba(201,162,74,.2);border:1px solid #c9a24a;color:#f0d27a}
+  .rarity-coke    .cd-rarity{background:rgba(200,16,46,.25);border:1px solid #e03050;color:#ff9090}
+  .rarity-silver  .cd-rarity{background:rgba(180,200,220,.15);border:1px solid #c0d0e0;color:#d0e0f0}
+  .rarity-gold    .cd-rarity{background:rgba(240,200,60,.2);border:1px solid #f0d040;color:#ffe060;text-shadow:0 0 10px rgba(255,220,60,.6)}
+  .cd-num{font-size:9px;opacity:.45;letter-spacing:.25em;margin-bottom:6px}
+  .cd-name{font-size:22px;letter-spacing:.08em;margin:0 0 8px;line-height:1.15}
+  .cd-divider{height:1px;background:linear-gradient(90deg,transparent,#c9a24a,transparent);margin:10px 0}
+  .cd-row{display:flex;justify-content:space-between;font-size:10px;opacity:.7;margin:4px 0;letter-spacing:.08em}
+  .cd-desc{font-family:'Lora',serif;font-size:12px;line-height:1.65;opacity:.82;margin:10px 0}
+  .cd-copies{
+    margin-top:12px;font-size:10px;letter-spacing:.1em;
+    padding:7px 14px;border-radius:8px;text-align:center;
+    background:rgba(201,162,74,.12);border:1px solid rgba(201,162,74,.3);
   }
-  .card-detail-body{padding:18px 20px 20px}
-  .card-detail-rarity{
-    display:inline-block;font-size:9px;letter-spacing:.18em;padding:3px 10px;
-    border-radius:99px;margin-bottom:10px;font-weight:700;
-  }
-  .rarity-classic .card-detail-rarity{background:rgba(201,162,74,.2);border:1px solid #c9a24a;color:#f0d27a}
-  .rarity-coke    .card-detail-rarity{background:rgba(200,16,46,.25);border:1px solid #e03050;color:#ff9090}
-  .rarity-silver  .card-detail-rarity{background:rgba(180,200,220,.15);border:1px solid #c0d0e0;color:#d0e0f0}
-  .rarity-gold    .card-detail-rarity{background:rgba(240,200,60,.2);border:1px solid #f0d040;color:#ffe060;text-shadow:0 0 10px rgba(255,220,60,.6)}
-  .card-detail h2{font-size:20px;letter-spacing:.1em;margin:0 0 6px;line-height:1.2}
-  .card-detail .cd-num{font-size:10px;opacity:.55;letter-spacing:.2em;margin-bottom:10px}
-  .card-detail .cd-desc{font-family:'Lora',serif;font-size:12px;line-height:1.6;opacity:.8;margin:10px 0}
-  .card-detail .cd-copies{font-size:11px;opacity:.65;letter-spacing:.1em}
-  .card-detail-close{
-    position:absolute;top:10px;right:12px;width:30px;height:30px;
-    background:rgba(0,0,0,.6);border:1px solid #c9a24a;border-radius:50%;
+  .cd-missing{opacity:.4;font-size:11px;text-align:center;margin-top:12px;letter-spacing:.1em}
+  .cd-close{
+    position:absolute;top:10px;right:12px;width:32px;height:32px;
+    background:rgba(0,0,0,.7);border:1.5px solid #c9a24a;border-radius:50%;
     color:#f0d890;font-size:16px;cursor:pointer;display:grid;place-items:center;
-    z-index:2;transition:.15s;
+    z-index:5;transition:.15s;
   }
-  .card-detail-close:hover{background:#c9a24a;color:#1a0c04}
+  .cd-close:hover{background:#c9a24a;color:#1a0c04}
+
+  /* Particle stars for gold */
+  @keyframes starFloat{
+    0%{transform:translateY(0) scale(1);opacity:1}
+    100%{transform:translateY(-60px) scale(0);opacity:0}
+  }
+  .cd-star{
+    position:absolute;pointer-events:none;font-size:14px;
+    animation:starFloat 1.2s ease forwards;
+  }
 
   /* ===== MUSIC PLAYER ===== */
   .music-player{
@@ -575,11 +610,7 @@
 
 
 <!-- Card detail overlay -->
-<div class="card-detail-veil" id="cardDetailVeil">
-  <div class="card-detail" id="cardDetail">
-    <div class="card-detail-close" id="cardDetailClose">✕</div>
-  </div>
-</div>
+<div class="card-detail-veil" id="cardDetailVeil"></div>
 
 <!-- Music player -->
 <label class="music-upload-btn" id="musicUploadBtn" title="Subir música de fondo">🎵 MÚSICA</label>
@@ -660,6 +691,7 @@
   <button data-tab="team"><span class="ico">⚽</span>EQUIPO</button>
   <button data-tab="perfil"><span class="ico">🗺</span>PERFIL</button>
   <button data-tab="repetidas"><span class="ico">📋</span>REPETIDAS</button>
+  <button data-tab="reglas"><span class="ico">📜</span>REGLAS</button>
 </div>
 
 <div class="veil" id="veil"><div class="modal" id="modal"></div></div>
@@ -1346,7 +1378,7 @@ document.getElementById('openTesoros').onclick=showTesoros;
 document.getElementById('openTrueques').onclick=showTrueques;
 document.getElementById('openTeam').onclick=showTeam;
 
-document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>{
+document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=async ()=>{
   document.querySelectorAll('.tabbar button').forEach(x=>x.classList.remove('active'));
   b.classList.add('active');
   const t=b.dataset.tab;
@@ -1354,6 +1386,22 @@ document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>{
   else if(t==='trueques') showTrueques();
   else if(t==='team') showTeam();
   else if(t==='album'){ setClosed(false); closeModal(); }
+  else if(t==='reglas'){
+    // Load rules from Firestore doc 'config/reglas'
+    const snap = await getDoc(doc(db,'config','reglas'));
+    const data = snap.exists() ? snap.data() : {};
+    const texto = data.texto || 'Las reglas aún no fueron cargadas. Editalas desde el Panel de Administración.';
+    const titulo = data.titulo || '📜 REGLAS DEL ÁLBUM';
+    openModal(`
+      <h2 style="letter-spacing:.12em">${titulo}</h2>
+      <div class="cd-divider" style="margin:10px 0"></div>
+      <div style="font-family:'Lora',serif;font-size:13px;line-height:1.75;text-align:left;
+        white-space:pre-wrap;max-height:60vh;overflow-y:auto;color:#e8d090;padding:4px 2px">
+        ${texto.replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+      </div>
+      <div class="cd-divider" style="margin:10px 0"></div>
+      <button class="btn ghost" onclick="closeModal()">Cerrar</button>`);
+  }
   else if(t==='repetidas'){
     const dupes = CARDS.filter(c=>(owned[c.id]||0)>1);
     if(!dupes.length){
@@ -1418,33 +1466,59 @@ renderCover();
 const RARITY_LABEL = { classic:'Clásico', coke:'Coca-Cola', silver:'Plateado', gold:'Dorado ✦' };
 
 function openCardDetail(card, idx){
-  const have = (owned[card.id]||0) > 0;
-  const rarClass = 'rarity-' + (card.rarity||'classic');
-  const rarLabel = RARITY_LABEL[card.rarity] || 'Clásico';
+  const have  = (owned[card.id]||0) > 0;
+  const rar   = card.rarity || 'classic';
+  const rarLabel = RARITY_LABEL[rar] || 'Clásico';
   const copies = owned[card.id] || 0;
+  const veil  = document.getElementById('cardDetailVeil');
 
   const imgHTML = card.image
-    ? `<img class="card-detail-img" src="${card.image}" alt="${card.name}"/>`
-    : `<div class="card-detail-img-placeholder">${alfajorSVG({...card, _big:true})}</div>`;
+    ? `<img class="cd-img" src="${card.image}" alt="${card.name}"/>`
+    : `<div class="cd-placeholder">${alfajorSVG({...card})}</div>`;
 
-  document.getElementById('cardDetail').className = `card-detail ${rarClass}`;
-  document.getElementById('cardDetail').innerHTML = `
-    <div class="card-detail-close" id="cardDetailClose">✕</div>
-    ${have ? imgHTML : `<div class="card-detail-img-placeholder" style="font-family:'UnifrakturCook',serif;font-size:80px;color:rgba(201,162,74,.25)">?</div>`}
-    <div class="card-detail-body">
-      <div class="card-detail-rarity">${rarLabel}</div>
-      <div class="cd-num">#${idx+1}</div>
-      <h2>${have ? card.name : '???'}</h2>
+  veil.innerHTML = `<div class="cd-wrap rarity-${rar}" id="cdWrap">
+    <div class="cd-close" id="cdClose">✕</div>
+    ${have ? imgHTML : `<div class="cd-placeholder" style="font-family:'UnifrakturCook',serif;font-size:90px;color:rgba(201,162,74,.2)">?</div>`}
+    <div class="cd-body">
+      <div class="cd-rarity">${rarLabel}</div>
+      <div class="cd-num">FIGURITA #${idx+1}</div>
+      <div class="cd-name">${have ? card.name : '???'}</div>
+      <div class="cd-divider"></div>
+      ${card.brand   ? `<div class="cd-row"><span>MARCA</span><span>${card.brand}</span></div>`:''}
+      ${card.year    ? `<div class="cd-row"><span>AÑO</span><span>${card.year}</span></div>`:''}
+      ${card.origin  ? `<div class="cd-row"><span>ORIGEN</span><span>${card.origin}</span></div>`:''}
+      ${(card.brand||card.year||card.origin)?'<div class="cd-divider"></div>':''}
       ${card.description ? `<div class="cd-desc">${card.description}</div>` : ''}
       ${have
-        ? `<div class="cd-copies">${copies > 1 ? `Tenés ${copies} copias · ` : ''}En tu álbum ✓</div>`
-        : `<div class="cd-copies" style="opacity:.45">Todavía no la conseguiste</div>`}
-    </div>`;
-  document.getElementById('cardDetailVeil').classList.add('show');
-  document.getElementById('cardDetailClose').onclick = closeCardDetail;
+        ? `<div class="cd-copies">✓ EN TU ÁLBUM${copies>1?` &nbsp;·&nbsp; ${copies} COPIAS (${copies-1} REPE)`  :''}</div>`
+        : `<div class="cd-missing">Todavía no la conseguiste</div>`}
+    </div>
+  </div>`;
+
+  veil.classList.add('show');
+  document.getElementById('cdClose').onclick = closeCardDetail;
+
+  // Gold star particles
+  if(rar==='gold' && have){
+    const wrap = document.getElementById('cdWrap');
+    for(let i=0;i<8;i++){
+      const s=document.createElement('span');
+      s.className='cd-star';
+      s.textContent='✦';
+      s.style.cssText=`left:${10+Math.random()*80}%;top:${20+Math.random()*60}%;animation-delay:${Math.random()*.6}s;color:#f0d040`;
+      wrap.appendChild(s);
+    }
+  }
 }
 function closeCardDetail(){
-  document.getElementById('cardDetailVeil').classList.remove('show');
+  const wrap = document.getElementById('cdWrap');
+  const veil = document.getElementById('cardDetailVeil');
+  if(wrap){
+    wrap.classList.add('closing');
+    setTimeout(()=>veil.classList.remove('show'), 280);
+  } else {
+    veil.classList.remove('show');
+  }
 }
 document.getElementById('cardDetailVeil').addEventListener('click', e=>{
   if(e.target.id==='cardDetailVeil') closeCardDetail();
