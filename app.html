@@ -927,8 +927,6 @@ function slotHTML(c,idx){
   </div>`;
 }
 function renderAlbum(){
-  // Don't re-render while user has pending + buttons to tap
-  if(window._PP && Object.keys(window._PP).length) return;
   const pgs=pages();
   if(pageIndex>=pgs.length) pageIndex=Math.max(0,pgs.length-1);
   const L=pgs[pageIndex]||{title:'—',slots:[]};
@@ -955,12 +953,21 @@ function renderHUD(){
   document.getElementById('hudPct').textContent=pct+'%';
   document.getElementById('hudBar').style.width=pct+'%';
 }
+function reattachPending(){
+  if(!window._PP) return;
+  for(const cid in window._PP){
+    const el = document.querySelector(`.slot[data-cid="${cid}"]`);
+    if(el && !el.querySelector('.slot-pegar-btn')) attachPegarBtn(el, cid, window._PP[cid]);
+  }
+}
 document.getElementById('prev').onclick=()=>{
   if(pageIndex<=0) return;
   const book=document.querySelector('.book');
   book.classList.add('turning-right');
   setTimeout(()=>book.classList.remove('turning-right'),360);
-  pageIndex=Math.max(0,pageIndex-2);renderAlbum();
+  pageIndex=Math.max(0,pageIndex-2);
+  renderAlbum();
+  reattachPending();
 };
 document.getElementById('next').onclick=()=>{
   const p=pages();
@@ -968,7 +975,9 @@ document.getElementById('next').onclick=()=>{
   const book=document.querySelector('.book');
   book.classList.add('turning-left');
   setTimeout(()=>book.classList.remove('turning-left'),360);
-  pageIndex=Math.min(Math.max(0,p.length-1),pageIndex+2);renderAlbum();
+  pageIndex=Math.min(Math.max(0,p.length-1),pageIndex+2);
+  renderAlbum();
+  reattachPending();
 };
 
 /* ============== TESOROS ============== */
@@ -1252,48 +1261,41 @@ function openModal(html){
   document.getElementById('modal').innerHTML=html;
   document.getElementById('veil').classList.add('show');
 }
+function attachPegarBtn(el, cid, card){
+  el.querySelector('.slot-pegar-btn')?.remove();
+  const btn = document.createElement('div');
+  btn.className = 'slot-pegar-btn';
+  btn.innerHTML = '<div class="pegar-circle"></div><span class="pegar-label">PEGAR</span>';
+  el.appendChild(btn);
+  btn.onclick = async (ev)=>{
+    ev.stopPropagation();
+    btn.remove();
+    delete window._PP[cid];
+    owned[cid] = (owned[cid]||0)+1;
+    const r = (CARDS.find(c=>c.id===cid)||{}).rarity||'classic';
+    el.className = `slot have ${r}`;
+    el.dataset.cid = cid;
+    el.innerHTML = `<span class="num">#${parseInt(el.dataset.idx)+1}</span>
+      <div class="art">${alfajorSVG(card)}</div>
+      <div class="name">${card.name||''}</div>`;
+    el.classList.remove('pegar-anim'); void el.offsetWidth; el.classList.add('pegar-anim');
+    el.onclick = ()=>openCardDetail(card, parseInt(el.dataset.idx));
+    await savePlayer();
+    // Re-add buttons for remaining pending on this page
+    for(const rid in window._PP){
+      const rel = document.querySelector(`.slot[data-cid="${rid}"]`);
+      if(rel && !rel.querySelector('.slot-pegar-btn')) attachPegarBtn(rel, rid, window._PP[rid]);
+    }
+  };
+}
+
 function closeModal(){
   document.getElementById('veil').classList.remove('show');
   if(window._PP && Object.keys(window._PP).length){
     setTimeout(()=>{
       for(const cid in window._PP){
-        const card = window._PP[cid];
         const el = document.querySelector(`.slot[data-cid="${cid}"]`);
-        if(!el) continue;
-        el.querySelector('.slot-pegar-btn')?.remove();
-        const btn = document.createElement('div');
-        btn.className = 'slot-pegar-btn';
-        btn.innerHTML = '<div class="pegar-circle"></div><span class="pegar-label">PEGAR</span>';
-        el.appendChild(btn);
-        btn.onclick = async (ev)=>{
-          ev.stopPropagation();
-          btn.remove();
-          delete window._PP[cid];
-          owned[cid] = (owned[cid]||0)+1;
-          // Render this slot immediately
-          const r = (CARDS.find(c=>c.id===cid)||{}).rarity||'classic';
-          el.className = `slot have ${r}`;
-          el.dataset.cid = cid;
-          el.innerHTML = `<span class="num">#${parseInt(el.dataset.idx)+1}</span>
-            <div class="art">${alfajorSVG(card)}</div>
-            <div class="name">${card.name||''}</div>`;
-          el.classList.remove('pegar-anim'); void el.offsetWidth; el.classList.add('pegar-anim');
-          el.onclick = ()=>openCardDetail(card, parseInt(el.dataset.idx));
-          // Save — snapshot will fire but we re-add remaining + buttons after
-          await savePlayer();
-          // Re-add + buttons for still-pending cards
-          for(const rid in window._PP){
-            const rel = document.querySelector(`.slot[data-cid="${rid}"]`);
-            if(!rel || rel.querySelector('.slot-pegar-btn')) continue;
-            const rb = document.createElement('div');
-            rb.className = 'slot-pegar-btn';
-            rb.innerHTML = '<div class="pegar-circle"></div><span class="pegar-label">PEGAR</span>';
-            rel.appendChild(rb);
-            rb.onclick = rel._pegarHandler;
-          }
-        };
-        // Store handler reference so we can re-attach after re-render
-        el._pegarHandler = btn.onclick;
+        if(el) attachPegarBtn(el, cid, window._PP[cid]);
       }
     }, 150);
   }
