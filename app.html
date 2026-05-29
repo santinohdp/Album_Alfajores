@@ -339,22 +339,10 @@
     position:fixed;inset:0;z-index:60;
     display:none;align-items:center;justify-content:center;
     background:rgba(0,0,0,0);
-    transition:background .35s ease;
+    transition:background .4s ease;
   }
   .card-detail-veil.show{display:flex;background:rgba(0,0,0,.88)}
 
-  /* The card itself flies in from the slot */
-  @keyframes cardFlyIn{
-    0%  {transform:scale(.12) translateY(60vh);opacity:0;filter:brightness(2)}
-    35% {opacity:1;filter:brightness(1.4)}
-    65% {transform:scale(1.04) translateY(-6px)}
-    82% {transform:scale(.97) translateY(2px)}
-    100%{transform:scale(1) translateY(0);filter:brightness(1)}
-  }
-  @keyframes cardFlyOut{
-    0%  {transform:scale(1);opacity:1}
-    100%{transform:scale(.1) translateY(60vh);opacity:0}
-  }
   .cd-wrap{
     position:relative;
     width:min(420px,92vw);max-height:92vh;
@@ -363,9 +351,8 @@
     border:2px solid #c9a24a;border-radius:18px;
     box-shadow:0 50px 100px rgba(0,0,0,.9),inset 0 0 40px rgba(201,162,74,.12);
     overflow:hidden;font-family:'Cinzel',serif;color:#f0d890;
-    animation:cardFlyIn .55s cubic-bezier(.22,1,.36,1) forwards;
+    transform-origin:var(--origin-x,50%) var(--origin-y,50%);
   }
-  .cd-wrap.closing{animation:cardFlyOut .3s ease forwards}
 
   /* Rarity border glow */
   .cd-wrap.rarity-gold  {border-color:#f0d040;box-shadow:0 0 60px rgba(240,200,60,.5),0 50px 100px rgba(0,0,0,.9)}
@@ -1465,12 +1452,17 @@ renderCover();
 /* ===== CARD DETAIL ===== */
 const RARITY_LABEL = { classic:'Clásico', coke:'Coca-Cola', silver:'Plateado', gold:'Dorado ✦' };
 
-function openCardDetail(card, idx){
-  const have  = (owned[card.id]||0) > 0;
-  const rar   = card.rarity || 'classic';
+let _cdOriginRect = null; // slot bounding rect for fly animation
+
+function openCardDetail(card, idx, slotEl){
+  const have     = (owned[card.id]||0) > 0;
+  const rar      = card.rarity || 'classic';
   const rarLabel = RARITY_LABEL[rar] || 'Clásico';
-  const copies = owned[card.id] || 0;
-  const veil  = document.getElementById('cardDetailVeil');
+  const copies   = owned[card.id] || 0;
+  const veil     = document.getElementById('cardDetailVeil');
+
+  // Store slot rect for close animation
+  _cdOriginRect = slotEl ? slotEl.getBoundingClientRect() : null;
 
   const imgHTML = card.image
     ? `<img class="cd-img" src="${card.image}" alt="${card.name}"/>`
@@ -1490,17 +1482,45 @@ function openCardDetail(card, idx){
       ${(card.brand||card.year||card.origin)?'<div class="cd-divider"></div>':''}
       ${card.description ? `<div class="cd-desc">${card.description}</div>` : ''}
       ${have
-        ? `<div class="cd-copies">✓ EN TU ÁLBUM${copies>1?` &nbsp;·&nbsp; ${copies} COPIAS (${copies-1} REPE)`  :''}</div>`
+        ? `<div class="cd-copies">✓ EN TU ÁLBUM${copies>1?` &nbsp;·&nbsp; ${copies} COPIAS (${copies-1} REPE)`:''}</div>`
         : `<div class="cd-missing">Todavía no la conseguiste</div>`}
     </div>
   </div>`;
 
   veil.classList.add('show');
+  const wrap = document.getElementById('cdWrap');
+
+  // Fly-in: from slot position to center
+  if(_cdOriginRect){
+    const slotCX = _cdOriginRect.left + _cdOriginRect.width/2;
+    const slotCY = _cdOriginRect.top  + _cdOriginRect.height/2;
+    const vCX = window.innerWidth/2;
+    const vCY = window.innerHeight/2;
+    const dx = slotCX - vCX;
+    const dy = slotCY - vCY;
+    // Calculate how small the card is relative to slot
+    const scaleStart = Math.min(_cdOriginRect.width, _cdOriginRect.height) /
+                       Math.min(wrap.offsetWidth||400, window.innerHeight*.92) * 0.85;
+    wrap.animate([
+      {transform:`translate(${dx}px,${dy}px) scale(${scaleStart}) rotate(${dx>0?8:-8}deg)`,
+       opacity:'0', filter:'brightness(2.5)'},
+      {transform:`translate(${dx*.3}px,${dy*.3}px) scale(1.08) rotate(0deg)`,
+       opacity:'1', filter:'brightness(1.3)', offset:.55},
+      {transform:`translate(0,0) scale(.97)`, offset:.78},
+      {transform:`translate(0,0) scale(1)`, filter:'brightness(1)'}
+    ], {duration:520, easing:'cubic-bezier(.22,1,.36,1)', fill:'forwards'});
+  } else {
+    wrap.animate([
+      {transform:'scale(.1) translateY(60vh)',opacity:'0'},
+      {transform:'scale(1.04)',opacity:'1',offset:.7},
+      {transform:'scale(1)'}
+    ],{duration:500,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+  }
+
   document.getElementById('cdClose').onclick = closeCardDetail;
 
-  // Gold star particles
+  // Gold stars
   if(rar==='gold' && have){
-    const wrap = document.getElementById('cdWrap');
     for(let i=0;i<8;i++){
       const s=document.createElement('span');
       s.className='cd-star';
@@ -1510,16 +1530,39 @@ function openCardDetail(card, idx){
     }
   }
 }
+
 function closeCardDetail(){
   const wrap = document.getElementById('cdWrap');
   const veil = document.getElementById('cardDetailVeil');
-  if(wrap){
-    wrap.classList.add('closing');
-    setTimeout(()=>veil.classList.remove('show'), 280);
+  if(!wrap){ veil.classList.remove('show'); return; }
+
+  let anim;
+  if(_cdOriginRect){
+    const slotCX = _cdOriginRect.left + _cdOriginRect.width/2;
+    const slotCY = _cdOriginRect.top  + _cdOriginRect.height/2;
+    const vCX = window.innerWidth/2;
+    const vCY = window.innerHeight/2;
+    const dx = slotCX - vCX;
+    const dy = slotCY - vCY;
+    const scaleEnd = Math.min(_cdOriginRect.width, _cdOriginRect.height) /
+                     Math.min(wrap.offsetWidth||400, window.innerHeight*.92) * 0.85;
+    anim = wrap.animate([
+      {transform:'translate(0,0) scale(1)',opacity:'1'},
+      {transform:`translate(${dx*.4}px,${dy*.4}px) scale(1.05) rotate(${dx>0?4:-4}deg)`,offset:.3},
+      {transform:`translate(${dx}px,${dy}px) scale(${scaleEnd}) rotate(${dx>0?10:-10}deg)`,
+       opacity:'0',filter:'brightness(2)'}
+    ],{duration:380, easing:'cubic-bezier(.55,0,1,.45)', fill:'forwards'});
   } else {
-    veil.classList.remove('show');
+    anim = wrap.animate([
+      {transform:'scale(1)',opacity:'1'},
+      {transform:'scale(.1) translateY(60vh)',opacity:'0'}
+    ],{duration:320,easing:'ease-in',fill:'forwards'});
   }
+  anim.onfinish = ()=> veil.classList.remove('show');
+  veil.style.background='rgba(0,0,0,0)';
+  setTimeout(()=>veil.style.background='',400);
 }
+
 document.getElementById('cardDetailVeil').addEventListener('click', e=>{
   if(e.target.id==='cardDetailVeil') closeCardDetail();
 });
