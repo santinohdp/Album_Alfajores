@@ -1502,19 +1502,24 @@ function openCardDetail(card, idx, slotEl){
     const scaleStart = Math.min(_cdOriginRect.width, _cdOriginRect.height) /
                        Math.min(wrap.offsetWidth||400, window.innerHeight*.92) * 0.85;
     wrap.animate([
-      {transform:`translate(${dx}px,${dy}px) scale(${scaleStart}) rotate(${dx>0?8:-8}deg)`,
-       opacity:'0', filter:'brightness(2.5)'},
-      {transform:`translate(${dx*.3}px,${dy*.3}px) scale(1.08) rotate(0deg)`,
-       opacity:'1', filter:'brightness(1.3)', offset:.55},
-      {transform:`translate(0,0) scale(.97)`, offset:.78},
+      {transform:`translate(${dx}px,${dy}px) scale(${scaleStart}) rotate(${dx>0?12:-12}deg)`,
+       opacity:'0', filter:'brightness(3)'},
+      {transform:`translate(${dx*.55}px,${dy*.55}px) scale(${scaleStart*1.8}) rotate(${dx>0?6:-6}deg)`,
+       opacity:'1', filter:'brightness(1.8)', offset:.28},
+      {transform:`translate(${dx*.15}px,${dy*.15}px) scale(1.06) rotate(${dx>0?2:-2}deg)`,
+       filter:'brightness(1.2)', offset:.62},
+      {transform:`translate(0,0) scale(.96)`, offset:.80},
+      {transform:`translate(0,0) scale(1.02)`, offset:.90},
       {transform:`translate(0,0) scale(1)`, filter:'brightness(1)'}
-    ], {duration:520, easing:'cubic-bezier(.22,1,.36,1)', fill:'forwards'});
+    ], {duration:920, easing:'cubic-bezier(.22,1,.36,1)', fill:'forwards'});
   } else {
     wrap.animate([
-      {transform:'scale(.1) translateY(60vh)',opacity:'0'},
-      {transform:'scale(1.04)',opacity:'1',offset:.7},
+      {transform:'scale(.08) translateY(70vh)',opacity:'0',filter:'brightness(3)'},
+      {transform:'scale(.5) translateY(20vh)',opacity:'1',filter:'brightness(1.5)',offset:.4},
+      {transform:'scale(1.05)',offset:.75},
+      {transform:'scale(.97)',offset:.88},
       {transform:'scale(1)'}
-    ],{duration:500,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+    ],{duration:900,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
   }
 
   document.getElementById('cdClose').onclick = closeCardDetail;
@@ -1547,20 +1552,25 @@ function closeCardDetail(){
     const scaleEnd = Math.min(_cdOriginRect.width, _cdOriginRect.height) /
                      Math.min(wrap.offsetWidth||400, window.innerHeight*.92) * 0.85;
     anim = wrap.animate([
-      {transform:'translate(0,0) scale(1)',opacity:'1'},
-      {transform:`translate(${dx*.4}px,${dy*.4}px) scale(1.05) rotate(${dx>0?4:-4}deg)`,offset:.3},
-      {transform:`translate(${dx}px,${dy}px) scale(${scaleEnd}) rotate(${dx>0?10:-10}deg)`,
-       opacity:'0',filter:'brightness(2)'}
-    ],{duration:380, easing:'cubic-bezier(.55,0,1,.45)', fill:'forwards'});
+      {transform:'translate(0,0) scale(1)',opacity:'1',filter:'brightness(1)'},
+      {transform:`translate(${dx*.2}px,${dy*.2}px) scale(1.06) rotate(${dx>0?3:-3}deg)`,
+       filter:'brightness(1.3)', offset:.18},
+      {transform:`translate(${dx*.55}px,${dy*.55}px) scale(${scaleEnd*2}) rotate(${dx>0?8:-8}deg)`,
+       opacity:'.6', filter:'brightness(2)', offset:.65},
+      {transform:`translate(${dx}px,${dy}px) scale(${scaleEnd}) rotate(${dx>0?14:-14}deg)`,
+       opacity:'0', filter:'brightness(3)'}
+    ],{duration:680, easing:'cubic-bezier(.55,0,1,.45)', fill:'forwards'});
   } else {
     anim = wrap.animate([
       {transform:'scale(1)',opacity:'1'},
-      {transform:'scale(.1) translateY(60vh)',opacity:'0'}
-    ],{duration:320,easing:'ease-in',fill:'forwards'});
+      {transform:'scale(1.04)',offset:.15},
+      {transform:'scale(.08) translateY(70vh)',opacity:'0',filter:'brightness(3)'}
+    ],{duration:600,easing:'ease-in',fill:'forwards'});
   }
   anim.onfinish = ()=> veil.classList.remove('show');
+  veil.style.transition='background .6s ease';
   veil.style.background='rgba(0,0,0,0)';
-  setTimeout(()=>veil.style.background='',400);
+  setTimeout(()=>{ veil.style.background=''; veil.style.transition=''; },700);
 }
 
 document.getElementById('cardDetailVeil').addEventListener('click', e=>{
