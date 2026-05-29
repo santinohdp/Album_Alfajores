@@ -308,6 +308,22 @@ $('#clearInv').onclick = async ()=>{
   if(!confirm('¿Vaciar inventario de este jugador?')) return;
   await setDoc(doc(db,'players',uid), { inv: {} }, { merge:true });
 };
+/* ---------- REGLAS ---------- */
+async function loadReglas(){
+  const snap = await getDoc(doc(db,'config','reglas'));
+  if(snap.exists()){
+    const d = snap.data();
+    document.getElementById('reglasTitulo').value = d.titulo||'';
+    document.getElementById('reglasTexto').value  = d.texto||'';
+  }
+}
+document.getElementById('reglasGuardar').onclick = async ()=>{
+  const titulo = document.getElementById('reglasTitulo').value.trim();
+  const texto  = document.getElementById('reglasTexto').value.trim();
+  await setDoc(doc(db,'config','reglas'), {titulo, texto}, {merge:true});
+  alert('¡Reglas guardadas!');
+};
+loadReglas();
 </script>
 </body>
 </html>
