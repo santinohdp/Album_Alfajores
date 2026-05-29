@@ -404,22 +404,29 @@
 
   /* ===== STICKER PEGAR ANIMATION ===== */
   @keyframes stickerPegar{
-    0%  {transform:scale(2.2) rotate(-12deg);opacity:0;filter:brightness(2)}
-    40% {transform:scale(1.1) rotate(3deg);opacity:1;filter:brightness(1.3)}
-    65% {transform:scale(.94) rotate(-1deg)}
-    80% {transform:scale(1.03) rotate(.5deg)}
+    0%  {transform:scale(3.5) rotate(-18deg) translateY(-20px);opacity:0;filter:brightness(3) drop-shadow(0 0 20px gold)}
+    25% {opacity:1;filter:brightness(2) drop-shadow(0 0 14px gold)}
+    55% {transform:scale(1.15) rotate(4deg) translateY(0);filter:brightness(1.4)}
+    75% {transform:scale(.92) rotate(-2deg)}
+    88% {transform:scale(1.06) rotate(1deg)}
     100%{transform:scale(1) rotate(0deg);filter:brightness(1)}
   }
-  .slot.pegar-anim .art{animation:stickerPegar .65s cubic-bezier(.34,1.56,.64,1) forwards}
   @keyframes stickerShine{
-    0%  {opacity:0;transform:translateX(-100%) rotate(25deg)}
-    50% {opacity:.7}
-    100%{opacity:0;transform:translateX(200%) rotate(25deg)}
+    0%  {opacity:0;transform:translateX(-150%) skewX(-20deg)}
+    30% {opacity:0}
+    55% {opacity:1}
+    100%{opacity:0;transform:translateX(250%) skewX(-20deg)}
   }
+  @keyframes slotGlow{
+    0%,100%{box-shadow:inset 0 0 14px rgba(100,65,20,.3),0 2px 4px rgba(0,0,0,.2)}
+    40%{box-shadow:0 0 30px rgba(255,220,80,.9),0 0 60px rgba(255,180,40,.5),inset 0 0 20px rgba(255,220,80,.4)}
+  }
+  .slot.pegar-anim{overflow:visible!important;animation:slotGlow 1.2s ease!important}
+  .slot.pegar-anim .art{animation:stickerPegar 1.2s cubic-bezier(.34,1.56,.64,1) forwards}
   .slot.pegar-anim::after{
-    content:"";position:absolute;inset:0;border-radius:7px;pointer-events:none;
-    background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.7) 50%,transparent 60%);
-    animation:stickerShine .65s ease forwards;
+    content:"";position:absolute;inset:0;border-radius:7px;pointer-events:none;z-index:10;
+    background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.95) 50%,transparent 70%);
+    animation:stickerShine 1.2s ease .2s forwards;
   }
 
   /* ===== PAGE TURN ===== */
@@ -583,6 +590,9 @@
   <span style="opacity:.5;font-size:11px">🔊</span>
 </div>
 <audio id="bgAudio" loop></audio>
+
+<!-- 3D Decorations canvas -->
+<canvas id="decoCanvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2"></canvas>
 
 <div class="title">¡ALFA-ÁLBUM ARGENTINO! · EDICIÓN DE LEYENDAS</div>
 
@@ -769,15 +779,18 @@ onAuthStateChanged(auth, async (user)=>{
       return;
     }
     myPlayer = data;
+    inv = myPlayer.inv || {};
     const raw = myPlayer.owned || {};
-    // Remove any pending-pegar cards from display (not yet pasted)
     owned = {...raw};
+    // Strip pending cards from display
     if(window._PP){
-      for(const cid in window._PP){
-        delete owned[cid]; // slot stays empty until user taps +
-      }
+      for(const cid in window._PP) delete owned[cid];
     }
-    inv   = myPlayer.inv   || {};
+    // If there are pending + buttons, don't re-render (would destroy them)
+    if(window._PP && Object.keys(window._PP).length){
+      renderHUD(); renderCover(); // only update stats, not slots
+      return;
+    }
     renderAlbum(); renderCover();
   });
 });
@@ -960,25 +973,23 @@ function reattachPending(){
     if(el && !el.querySelector('.slot-pegar-btn')) attachPegarBtn(el, cid, window._PP[cid]);
   }
 }
-document.getElementById('prev').onclick=()=>{
-  if(pageIndex<=0) return;
-  const book=document.querySelector('.book');
-  book.classList.add('turning-right');
-  setTimeout(()=>book.classList.remove('turning-right'),360);
-  pageIndex=Math.max(0,pageIndex-2);
-  renderAlbum();
-  reattachPending();
-};
-document.getElementById('next').onclick=()=>{
+function goPage(delta){
   const p=pages();
-  if(pageIndex+2>=p.length) return;
+  const newIdx = pageIndex+delta;
+  if(newIdx<0||newIdx>=p.length) return;
   const book=document.querySelector('.book');
-  book.classList.add('turning-left');
-  setTimeout(()=>book.classList.remove('turning-left'),360);
-  pageIndex=Math.min(Math.max(0,p.length-1),pageIndex+2);
+  book.classList.add(delta>0?'turning-left':'turning-right');
+  setTimeout(()=>book.classList.remove('turning-left','turning-right'),360);
+  // Temporarily clear _PP so renderAlbum runs fully, then re-add buttons
+  const savedPP = window._PP ? {...window._PP} : null;
+  window._PP = null;
+  pageIndex = newIdx;
   renderAlbum();
+  window._PP = savedPP;
   reattachPending();
-};
+}
+document.getElementById('prev').onclick=()=>goPage(-2);
+document.getElementById('next').onclick=()=>goPage(2);
 
 /* ============== TESOROS ============== */
 function showTesoros(){
@@ -1026,7 +1037,8 @@ async function openPack(pid){
   const cards=[];
   for(let i=0;i<(pack.size||5);i++){
     const c=pickCard(pack.allowed||[]); if(!c) continue;
-    const isDup=(owned[c.id]||0)>0;
+    // isDup = already in album OR already pending paste
+    const isDup = (owned[c.id]||0)>0 || !!(window._PP && window._PP[c.id]);
     if(!isDup){
       // New card: don't add to owned yet — user must tap + to paste
     } else {
@@ -1034,8 +1046,8 @@ async function openPack(pid){
     }
     cards.push({...c,dup:isDup});
   }
-  // Pending = new cards not yet pasted {cardId: cardObject}
-  window._PP = {};
+  // Pending = new cards not yet pasted {cardId: cardObject} - MERGE don't reset
+  if(!window._PP) window._PP = {};
   cards.filter(c=>!c.dup).forEach(c=>{ window._PP[c.id]=c; });
   await savePlayer(); // saves owned WITHOUT new cards
   openModal(`
@@ -1278,7 +1290,35 @@ function attachPegarBtn(el, cid, card){
     el.innerHTML = `<span class="num">#${parseInt(el.dataset.idx)+1}</span>
       <div class="art">${alfajorSVG(card)}</div>
       <div class="name">${card.name||''}</div>`;
-    el.classList.remove('pegar-anim'); void el.offsetWidth; el.classList.add('pegar-anim');
+    // Animate with Web Animations API - guaranteed to run
+    el.style.position = 'relative';
+    el.style.zIndex = '30';
+    const art = el.querySelector('.art');
+    if(art){
+      art.animate([
+        {transform:'scale(4) rotate(-20deg) translateY(-30px)',opacity:'0',filter:'brightness(4) drop-shadow(0 0 30px gold)'},
+        {transform:'scale(1.2) rotate(5deg) translateY(0)',opacity:'1',filter:'brightness(1.5)',offset:.45},
+        {transform:'scale(.9) rotate(-2deg)',offset:.68},
+        {transform:'scale(1.05) rotate(1deg)',offset:.84},
+        {transform:'scale(1) rotate(0deg)',filter:'brightness(1)'}
+      ],{duration:1100,easing:'ease-out',fill:'forwards'});
+    }
+    // Gold glow on slot
+    el.animate([
+      {boxShadow:'0 0 0px rgba(255,220,80,0)'},
+      {boxShadow:'0 0 40px rgba(255,220,80,.95), 0 0 80px rgba(255,180,40,.6)',offset:.4},
+      {boxShadow:'0 0 0px rgba(255,220,80,0)'}
+    ],{duration:1100,easing:'ease-out'});
+    // Shine sweep
+    const shine = document.createElement('div');
+    shine.style.cssText='position:absolute;inset:0;border-radius:7px;pointer-events:none;z-index:11;overflow:hidden';
+    shine.innerHTML='<div style="position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.9) 50%,transparent 70%);transform:translateX(-150%) skewX(-20deg)"></div>';
+    el.appendChild(shine);
+    shine.firstChild.animate([
+      {transform:'translateX(-150%) skewX(-20deg)'},
+      {transform:'translateX(250%) skewX(-20deg)'}
+    ],{duration:900,delay:200,easing:'ease-in-out'}).onfinish=()=>shine.remove();
+    setTimeout(()=>el.style.zIndex='', 1200);
     el.onclick = ()=>openCardDetail(card, parseInt(el.dataset.idx));
     await savePlayer();
     // Re-add buttons for remaining pending on this page
@@ -1443,6 +1483,176 @@ mpBtn.onclick = ()=>{
   if(bgAudio.paused){ bgAudio.play(); mpBtn.textContent='⏸'; }
   else { bgAudio.pause(); mpBtn.textContent='▶'; }
 };
+</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js';
+
+const canvas = document.getElementById('decoCanvas');
+const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(0,0,6);
+
+// Lighting
+const amb = new THREE.AmbientLight(0xffe8c0, 0.7);
+scene.add(amb);
+const dir = new THREE.DirectionalLight(0xfff5e0, 1.8);
+dir.position.set(3,6,4);
+dir.castShadow = true;
+scene.add(dir);
+const fill = new THREE.PointLight(0xc08040, 0.6, 20);
+fill.position.set(-4,2,3);
+scene.add(fill);
+
+// ── MATE 3D ──
+function buildMate(){
+  const g = new THREE.Group();
+
+  // Body (lathe - calabaza shape)
+  const pts = [];
+  const profile = [
+    [0,.0],[.3,.05],[.6,.15],[.85,.35],[1.0,.6],[1.05,.85],[1.0,1.1],
+    [.9,1.35],[.75,1.55],[.6,1.7],[.5,1.82],[.42,1.95],[.38,2.05],
+    [.35,2.15],[.38,2.25],[.45,2.3]
+  ];
+  for(const [x,y] of profile) pts.push(new THREE.Vector2(x*.55, y*.55));
+  const bodyGeo = new THREE.LatheGeometry(pts, 40);
+  const bodyMat = new THREE.MeshStandardMaterial({
+    color:0x4a2808, roughness:.85, metalness:.05,
+    map: (() => {
+      const c = document.createElement('canvas'); c.width=256; c.height=256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle='#4a2808';
+      ctx.fillRect(0,0,256,256);
+      // wood grain lines
+      for(let i=0;i<18;i++){
+        ctx.strokeStyle=`rgba(${20+i*3},${10+i*2},${4+i},${.15+Math.random()*.2})`;
+        ctx.lineWidth=1+Math.random()*2;
+        ctx.beginPath();ctx.moveTo(0,i*15+Math.random()*8);ctx.lineTo(256,i*15+Math.random()*8);ctx.stroke();
+      }
+      const t = new THREE.CanvasTexture(c); return t;
+    })()
+  });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.castShadow=true;
+  g.add(body);
+
+  // Metal rim top
+  const rimGeo = new THREE.TorusGeometry(.25,.025,12,32);
+  const rimMat = new THREE.MeshStandardMaterial({color:0xc0c8d0,roughness:.2,metalness:.9});
+  const rim = new THREE.Mesh(rimGeo, rimMat);
+  rim.position.y = 1.27; g.add(rim);
+
+  // Metal rim bottom
+  const rimB = rim.clone(); rimB.position.y=0.02; g.add(rimB);
+
+  // Straw (bombilla)
+  const strawGeo = new THREE.CylinderGeometry(.018,.018,1.8,8);
+  const strawMat = new THREE.MeshStandardMaterial({color:0xd0d8e0,roughness:.15,metalness:.95});
+  const straw = new THREE.Mesh(strawGeo, strawMat);
+  straw.rotation.z = .35; straw.position.set(.18,.9,0); g.add(straw);
+
+  // Straw ball (colador)
+  const ballGeo = new THREE.SphereGeometry(.06,12,12);
+  const ball = new THREE.Mesh(ballGeo, strawMat);
+  ball.position.set(.06,.03,0); g.add(ball);
+
+  // Yerba (green fill)
+  const yerGeo = new THREE.CylinderGeometry(.22,.18,.08,24);
+  const yerMat = new THREE.MeshStandardMaterial({color:0x5a8010,roughness:.95});
+  const yer = new THREE.Mesh(yerGeo, yerMat);
+  yer.position.y=1.24; g.add(yer);
+
+  g.scale.set(.9,.9,.9);
+  return g;
+}
+
+const mate = buildMate();
+mate.position.set(-3.8, -1.8, 0);
+mate.rotation.y = .3;
+scene.add(mate);
+
+// ── ALFAJOR 3D ──
+function buildAlfajor(){
+  const g = new THREE.Group();
+  const mat_choc = new THREE.MeshStandardMaterial({color:0x2e1608,roughness:.7,metalness:.02});
+  const mat_ddl  = new THREE.MeshStandardMaterial({color:0xd4a040,roughness:.9});
+
+  // Top cookie
+  const topGeo = new THREE.CylinderGeometry(.6,.62,.12,40);
+  const top = new THREE.Mesh(topGeo, mat_choc); top.position.y=.12; top.castShadow=true;
+  g.add(top);
+  // DDL filling
+  const fillGeo = new THREE.CylinderGeometry(.58,.58,.08,40);
+  const fill2 = new THREE.Mesh(fillGeo, mat_ddl); fill2.position.y=.04;
+  g.add(fill2);
+  // Bottom cookie
+  const botGeo = new THREE.CylinderGeometry(.62,.6,.12,40);
+  const bot = new THREE.Mesh(botGeo, mat_choc); bot.position.y=-.04; bot.castShadow=true;
+  g.add(bot);
+  // Shine disc on top
+  const shineGeo = new THREE.CircleGeometry(.3,32);
+  const shineMat = new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.12,roughness:.1});
+  const shine = new THREE.Mesh(shineGeo, shineMat);
+  shine.rotation.x=-Math.PI/2; shine.position.set(-.1,.185,.05);
+  g.add(shine);
+
+  return g;
+}
+const alf = buildAlfajor();
+alf.position.set(3.8, -2.0, 0);
+alf.rotation.y = -.4;
+alf.rotation.z = .15;
+scene.add(alf);
+
+// ── SOBRE 3D ──
+function buildSobre(){
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({color:0xe8d49a,roughness:.9,side:THREE.DoubleSide});
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1,.7,.015), mat);
+  g.add(body);
+  // Flap
+  const fShape = new THREE.Shape();
+  fShape.moveTo(-.5,.35); fShape.lineTo(0,0); fShape.lineTo(.5,.35);
+  const fGeo = new THREE.ShapeGeometry(fShape);
+  const flap = new THREE.Mesh(fGeo, new THREE.MeshStandardMaterial({color:0xd4c080,roughness:.9,side:THREE.DoubleSide}));
+  flap.position.z=.009; g.add(flap);
+  // Blue band
+  const band = new THREE.Mesh(new THREE.BoxGeometry(.85,.22,.02),
+    new THREE.MeshStandardMaterial({color:0x1a3a88,roughness:.6}));
+  band.position.set(0,-.05,.015); g.add(band);
+  return g;
+}
+const sobre = buildSobre();
+sobre.position.set(-3.6, .8, 0);
+sobre.rotation.y = .5;
+sobre.rotation.z = -.15;
+scene.add(sobre);
+
+// Animation loop
+let t=0;
+function animate(){
+  requestAnimationFrame(animate);
+  t+=.012;
+  mate.rotation.y = .3+Math.sin(t*.6)*.06;
+  mate.position.y = -1.8+Math.sin(t*.5)*.04;
+  alf.rotation.y = -.4+Math.sin(t*.7+1)*.08;
+  alf.position.y = -2.0+Math.sin(t*.55+.5)*.04;
+  sobre.rotation.z = -.15+Math.sin(t*.4+2)*.05;
+  sobre.position.y = .8+Math.sin(t*.5+1)*.04;
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
 </script>
 </body>
 </html>
